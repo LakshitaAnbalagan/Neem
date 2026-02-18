@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supplier dashboard – Neem Sourcing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="dashboard-supplier.html">Neem Sourcing</a>
+    <div class="nav-links">
+      <a href="products.html?my=1">My products</a>
+      <a href="chat.html">Chat</a>
+      <span class="text-muted text-small" id="userName"></span>
+      <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+    </div>
+  </nav>
+
+  <div class="container-wide page">
+    <h1 class="page-title">Supplier dashboard</h1>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">Your listings</h3>
+          <p class="text-muted">Manage product availability and prices.</p>
+          <a href="products.html?my=1" class="btn btn-primary">My products</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">Seasonal tip</h3>
+          <p class="text-muted mb-0" id="supplierSeasonalTip">Loading…</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">Add product</h3>
+          <p class="text-muted">List new neem product for buyers to find.</p>
+          <button type="button" class="btn btn-outline" id="addProductBtn">Add product</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">Messages</h3>
+          <p class="text-muted">Reply to buyer inquiries quickly to improve your trust score.</p>
+          <a href="chat.html" class="btn btn-outline">Open chat</a>
+        </div>
+      </div>
+    </div>
+    <div class="card card-body mt-4">
+      <h2 class="mb-3">Your location (for map)</h2>
+      <p class="text-muted text-small">Set your coordinates so buyers can see you on the supplier map.</p>
+      <div id="locationAlert" class="alert alert-danger hide"></div>
+      <form id="locationForm" class="row g-2 align-items-end">
+        <div class="col-auto">
+          <label class="form-label">Latitude</label>
+          <input type="number" step="any" class="form-control" id="lat" placeholder="e.g. 20.59">
+        </div>
+        <div class="col-auto">
+          <label class="form-label">Longitude</label>
+          <input type="number" step="any" class="form-control" id="lng" placeholder="e.g. 78.96">
+        </div>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-primary">Save location</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal fade" id="productModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="productAlert" class="alert alert-danger hide"></div>
+          <form id="productForm">
+            <div class="form-group mb-2">
+              <label>Neem product name</label>
+              <input type="text" class="form-control" name="name" placeholder="e.g. Neem oil, Neem kernels" required>
+            </div>
+            <div class="form-group mb-2">
+              <label class="d-flex justify-content-between align-items-center">
+                <span>Neem category</span>
+                <button type="button" class="btn btn-sm btn-outline-primary" id="suggestProductBtn" title="Suggest category and description from product name">Suggest with AI</button>
+              </label>
+              <input type="text" class="form-control" name="category" placeholder="e.g. Oil, Kernels, Leaves, Cake, Powder">
+            </div>
+            <div class="form-group mb-2">
+              <label>Description</label>
+              <textarea class="form-control" name="description" rows="2" placeholder="Brief description"></textarea>
+            </div>
+            <div class="form-group mb-2">
+              <label>Unit</label>
+              <select class="form-control" name="unit">
+                <option value="kg">kg</option>
+                <option value="ton">ton</option>
+                <option value="litre">litre</option>
+                <option value="bag">bag</option>
+              </select>
+            </div>
+            <div class="form-group mb-2">
+              <label>Price per unit (₹)</label>
+              <input type="number" class="form-control" name="pricePerUnit" min="0" step="0.01" placeholder="0">
+            </div>
+            <div class="form-group mb-2">
+              <label>Min order quantity</label>
+              <input type="number" class="form-control" name="minOrderQuantity" min="1" value="1">
+            </div>
+            <hr class="my-3">
+            <h6 class="mb-2">Quality &amp; specifications (for buyer consideration)</h6>
+            <div class="form-group mb-2">
+              <label>Moisture content (%)</label>
+              <input type="number" class="form-control" name="moistureContentPercent" min="0" max="100" step="0.1" placeholder="e.g. 12 for leaves/kernels">
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <label>PPM value</label>
+                <input type="number" class="form-control" name="ppmValue" min="0" step="0.01" placeholder="e.g. 1500">
+              </div>
+              <div class="col-6">
+                <label>PPM label</label>
+                <input type="text" class="form-control" name="ppmLabel" placeholder="e.g. Azadirachtin">
+              </div>
+            </div>
+            <p class="text-small text-muted mt-1 mb-2">e.g. Azadirachtin (ppm), Aflatoxin max (ppb)</p>
+            <div class="form-group mb-2">
+              <label class="d-flex justify-content-between align-items-center">
+                <span>Additional specifications</span>
+                <button type="button" class="btn btn-sm btn-outline" id="addSpecBtn">+ Add row</button>
+              </label>
+              <div id="specRows"></div>
+              <p class="text-small text-muted mt-1">e.g. Purity %, FFA %, Origin</p>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveProductBtn">Save product</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (!requireAuth('supplier')) throw new Error('auth');
+    const user = getUser();
+    document.getElementById('userName').textContent = user?.businessName || user?.name || user?.email || '';
+    document.getElementById('logoutBtn').onclick = () => { clearAuth(); location.href = 'index.html'; };
+    api('/api/tips/seasonal?role=supplier').then(function (data) {
+      if (data.tip) document.getElementById('supplierSeasonalTip').textContent = data.tip;
+      else document.getElementById('supplierSeasonalTip').textContent = 'Update availability and prices; buyers often plan bulk orders in summer and monsoon.';
+    }).catch(function () {
+      document.getElementById('supplierSeasonalTip').textContent = 'Update availability and prices; buyers often plan bulk orders in summer and monsoon.';
+    });
+    (async () => {
+      try {
+        const me = await api('/api/auth/me');
+        const loc = me.user?.location?.coordinates;
+        if (loc && loc.length >= 2) { document.getElementById('lng').value = loc[0]; document.getElementById('lat').value = loc[1]; }
+      } catch (_) {}
+    })();
+    document.getElementById('locationForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const alertEl = document.getElementById('locationAlert');
+      alertEl.classList.add('hide');
+      const lat = parseFloat(document.getElementById('lat').value);
+      const lng = parseFloat(document.getElementById('lng').value);
+      if (isNaN(lat) || isNaN(lng)) { alertEl.textContent = 'Enter valid latitude and longitude.'; alertEl.classList.remove('hide'); return; }
+      try {
+        await api('/api/users/profile', { method: 'PATCH', body: JSON.stringify({ lat, lng }) });
+        alertEl.classList.add('alert-success'); alertEl.classList.remove('alert-danger'); alertEl.textContent = 'Location saved.'; alertEl.classList.remove('hide');
+      } catch (err) {
+        alertEl.classList.remove('alert-success'); alertEl.classList.add('alert-danger'); alertEl.textContent = err.message || 'Failed to save.'; alertEl.classList.remove('hide');
+      }
+    };
+    const modal = new bootstrap.Modal(document.getElementById('productModal'));
+    const specRows = document.getElementById('specRows');
+    document.getElementById('addSpecBtn').onclick = () => {
+      const div = document.createElement('div');
+      div.className = 'd-flex gap-2 align-items-center mb-2 spec-row';
+      div.innerHTML = '<input type="text" class="form-control form-control-sm" placeholder="Name (e.g. Purity)" style="max-width:8rem"> <input type="text" class="form-control form-control-sm" placeholder="Value"> <input type="text" class="form-control form-control-sm" placeholder="Unit" style="max-width:5rem"> <button type="button" class="btn btn-sm btn-outline-danger remove-spec">×</button>';
+      div.querySelector('.remove-spec').onclick = () => div.remove();
+      specRows.appendChild(div);
+    };
+    document.getElementById('addProductBtn').onclick = () => { specRows.innerHTML = ''; modal.show(); };
+    document.getElementById('suggestProductBtn').onclick = function () {
+      const form = document.getElementById('productForm');
+      const name = (form.name && form.name.value || '').trim();
+      if (!name) { alert('Enter a product name first.'); return; }
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = '…';
+      api('/api/products/suggest', { method: 'POST', body: JSON.stringify({ name: name, description: (form.description && form.description.value || '').trim() }) })
+        .then(function (data) {
+          if (data.category) form.category.value = data.category;
+          if (data.description) form.description.value = data.description;
+        })
+        .catch(function () { alert('Suggestion unavailable. Try again or fill manually.'); })
+        .finally(function () { btn.disabled = false; btn.textContent = 'Suggest with AI'; });
+    };
+    document.getElementById('saveProductBtn').onclick = async () => {
+      const form = document.getElementById('productForm');
+      const alertEl = document.getElementById('productAlert');
+      alertEl.classList.add('hide');
+      const specs = [];
+      document.querySelectorAll('#specRows .spec-row').forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const name = inputs[0]?.value?.trim();
+        const value = inputs[1]?.value?.trim();
+        if (name && value) specs.push({ name, value, unit: (inputs[2]?.value?.trim() || '') });
+      });
+      const moisture = form.moistureContentPercent?.value ? parseFloat(form.moistureContentPercent.value) : null;
+      const ppmVal = form.ppmValue?.value ? parseFloat(form.ppmValue.value) : null;
+      const ppmLbl = form.ppmLabel?.value?.trim() || '';
+      const payload = {
+        name: form.name.value.trim(),
+        category: form.category.value.trim() || undefined,
+        description: form.description.value.trim() || undefined,
+        unit: form.unit.value,
+        pricePerUnit: parseFloat(form.pricePerUnit.value) || 0,
+        minOrderQuantity: parseInt(form.minOrderQuantity.value, 10) || 1,
+        moistureContentPercent: moisture,
+        ppmValue: ppmVal,
+        ppmLabel: ppmLbl,
+        specifications: specs
+      };
+      try {
+        await api('/api/products', { method: 'POST', body: JSON.stringify(payload) });
+        modal.hide();
+        form.reset();
+        specRows.innerHTML = '';
+        location.reload();
+      } catch (e) {
+        alertEl.textContent = e.message || 'Failed to add product.';
+        alertEl.classList.remove('hide');
+      }
+    };
+  </script>
+</body>
+</html>

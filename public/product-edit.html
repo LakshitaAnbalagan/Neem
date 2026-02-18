@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit product – Neem Sourcing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="dashboard-supplier.html">Neem Sourcing</a>
+    <div class="nav-links">
+      <a href="products.html?my=1">My products</a>
+      <a href="chat.html">Chat</a>
+      <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+    </div>
+  </nav>
+
+  <div class="container-narrow page">
+    <a href="products.html?my=1" class="text-muted text-small d-inline-block mb-2">← Back to my products</a>
+    <div class="card card-body">
+      <h1 class="mb-3">Edit product</h1>
+      <div id="alert" class="alert alert-danger hide"></div>
+      <form id="form">
+        <div class="form-group mb-2">
+          <label>Neem product name</label>
+          <input type="text" class="form-control" name="name" placeholder="e.g. Neem oil, Neem kernels" required>
+        </div>
+        <div class="form-group mb-2">
+          <label class="d-flex justify-content-between align-items-center">
+            <span>Neem category</span>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="suggestProductBtn" title="Suggest category and description from product name">Suggest with AI</button>
+          </label>
+          <input type="text" class="form-control" name="category" placeholder="Oil, Kernels, Leaves, Cake, Powder">
+        </div>
+        <div class="form-group mb-2">
+          <label>Description</label>
+          <textarea class="form-control" name="description" rows="3"></textarea>
+        </div>
+        <div class="form-group mb-2">
+          <label>Unit</label>
+          <select class="form-control" name="unit">
+            <option value="kg">kg</option>
+            <option value="ton">ton</option>
+            <option value="litre">litre</option>
+            <option value="bag">bag</option>
+          </select>
+        </div>
+        <div class="form-group mb-2">
+          <label>Price per unit (₹)</label>
+          <input type="number" class="form-control" name="pricePerUnit" min="0" step="0.01">
+        </div>
+        <div class="form-group mb-2">
+          <label>Min order quantity</label>
+          <input type="number" class="form-control" name="minOrderQuantity" min="1">
+        </div>
+        <hr class="my-3">
+        <h6 class="mb-2">Quality &amp; specifications (for buyer consideration)</h6>
+        <div class="form-group mb-2">
+          <label>Moisture content (%)</label>
+          <input type="number" class="form-control" name="moistureContentPercent" min="0" max="100" step="0.1" placeholder="e.g. 12">
+        </div>
+        <div class="row g-2">
+          <div class="col-6">
+            <label class="form-label">PPM value</label>
+            <input type="number" class="form-control" name="ppmValue" min="0" step="0.01" placeholder="e.g. 1500">
+          </div>
+          <div class="col-6">
+            <label class="form-label">PPM label</label>
+            <input type="text" class="form-control" name="ppmLabel" placeholder="e.g. Azadirachtin">
+          </div>
+        </div>
+        <div class="form-group mb-2 mt-2">
+          <label class="d-flex justify-content-between align-items-center">
+            <span>Additional specifications</span>
+            <button type="button" class="btn btn-sm btn-outline" id="addSpecBtn">+ Add row</button>
+          </label>
+          <div id="specRows"></div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-outline" id="deactivateBtn">Deactivate</button>
+        </div>
+      </form>
+    </div>
+    <div class="card card-body mt-3">
+      <h3 class="card-title">Availability</h3>
+      <div id="availAlert" class="alert alert-danger hide"></div>
+      <form id="availForm">
+        <div class="form-group mb-2">
+          <label>Quantity available</label>
+          <input type="number" class="form-control" name="quantityAvailable" min="0" step="1" required>
+        </div>
+        <div class="form-group mb-2">
+          <label>Unit</label>
+          <input type="text" class="form-control" name="unit" value="kg">
+        </div>
+        <button type="submit" class="btn btn-outline">Update availability</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    if (!requireAuth('supplier')) throw new Error('auth');
+    document.getElementById('logoutBtn').onclick = () => { clearAuth(); location.href = 'index.html'; };
+    const id = new URLSearchParams(location.search).get('id');
+    if (!id) { location.href = 'products.html?my=1'; throw new Error('no id'); }
+    const form = document.getElementById('form');
+    const alertEl = document.getElementById('alert');
+    const availForm = document.getElementById('availForm');
+    const availAlert = document.getElementById('availAlert');
+    let product;
+    function addSpecRow(s) {
+      const div = document.createElement('div');
+      div.className = 'd-flex gap-2 align-items-center mb-2 spec-row';
+      div.innerHTML = '<input type="text" class="form-control form-control-sm" placeholder="Name" style="max-width:8rem"> <input type="text" class="form-control form-control-sm" placeholder="Value"> <input type="text" class="form-control form-control-sm" placeholder="Unit" style="max-width:5rem"> <button type="button" class="btn btn-sm btn-outline-danger remove-spec">×</button>';
+      const inputs = div.querySelectorAll('input');
+      if (s) { inputs[0].value = s.name || ''; inputs[1].value = s.value || ''; inputs[2].value = s.unit || ''; }
+      div.querySelector('.remove-spec').onclick = () => div.remove();
+      document.getElementById('specRows').appendChild(div);
+    }
+    document.getElementById('addSpecBtn').onclick = () => addSpecRow(null);
+    document.getElementById('suggestProductBtn').onclick = function () {
+      const name = (form.name && form.name.value || '').trim();
+      if (!name) { alert('Enter a product name first.'); return; }
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = '…';
+      api('/api/products/suggest', { method: 'POST', body: JSON.stringify({ name: name, description: (form.description && form.description.value || '').trim() }) })
+        .then(function (data) {
+          if (data.category) form.category.value = data.category;
+          if (data.description) form.description.value = data.description;
+        })
+        .catch(function () { alert('Suggestion unavailable. Try again or fill manually.'); })
+        .finally(function () { btn.disabled = false; btn.textContent = 'Suggest with AI'; });
+    };
+    api('/api/products/' + id).then(p => {
+      product = p;
+      form.name.value = p.name || '';
+      form.category.value = p.category || '';
+      form.description.value = p.description || '';
+      form.unit.value = p.unit || 'kg';
+      form.pricePerUnit.value = p.pricePerUnit ?? '';
+      form.minOrderQuantity.value = p.minOrderQuantity ?? 1;
+      form.moistureContentPercent.value = (p.moistureContentPercent != null && p.moistureContentPercent !== '') ? p.moistureContentPercent : '';
+      form.ppmValue.value = (p.ppmValue != null && p.ppmValue !== '') ? p.ppmValue : '';
+      form.ppmLabel.value = p.ppmLabel || '';
+      const specEl = document.getElementById('specRows');
+      specEl.innerHTML = '';
+      (p.specifications || []).forEach(s => addSpecRow(s));
+      const a = p.availability;
+      if (a) {
+        availForm.quantityAvailable.value = a.quantityAvailable ?? '';
+        availForm.unit.value = a.unit || 'kg';
+      }
+    }).catch(() => { alertEl.classList.remove('hide'); alertEl.textContent = 'Product not found.'; });
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      alertEl.classList.add('hide');
+      try {
+        const specs = [];
+        document.querySelectorAll('#specRows .spec-row').forEach(row => {
+          const inputs = row.querySelectorAll('input');
+          const name = inputs[0]?.value?.trim();
+          const value = inputs[1]?.value?.trim();
+          if (name && value) specs.push({ name, value, unit: (inputs[2]?.value?.trim() || '') });
+        });
+        await api('/api/products/' + id, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            name: form.name.value.trim(),
+            category: form.category.value.trim() || undefined,
+            description: form.description.value.trim() || undefined,
+            unit: form.unit.value,
+            pricePerUnit: parseFloat(form.pricePerUnit.value) || 0,
+            minOrderQuantity: parseInt(form.minOrderQuantity.value, 10) || 1,
+            moistureContentPercent: form.moistureContentPercent?.value ? parseFloat(form.moistureContentPercent.value) : null,
+            ppmValue: form.ppmValue?.value ? parseFloat(form.ppmValue.value) : null,
+            ppmLabel: (form.ppmLabel?.value || '').trim() || null,
+            specifications: specs
+          })
+        });
+        window.location.href = 'products.html?my=1';
+      } catch (e) {
+        alertEl.textContent = e.message || 'Failed to update.';
+        alertEl.classList.remove('hide');
+      }
+    };
+    document.getElementById('deactivateBtn').onclick = async () => {
+      if (!confirm('Deactivate this product? It will no longer appear in search.')) return;
+      try {
+        await api('/api/products/' + id, { method: 'DELETE' });
+        window.location.href = 'products.html?my=1';
+      } catch (e) {
+        alertEl.textContent = e.message || 'Failed to deactivate.';
+        alertEl.classList.remove('hide');
+      }
+    };
+    availForm.onsubmit = async (e) => {
+      e.preventDefault();
+      availAlert.classList.add('hide');
+      try {
+        await api('/api/products/' + id + '/availability', {
+          method: 'POST',
+          body: JSON.stringify({
+            quantityAvailable: parseInt(availForm.quantityAvailable.value, 10) || 0,
+            unit: availForm.unit.value.trim() || 'kg'
+          })
+        });
+        availForm.quantityAvailable.value = '';
+        alert('Availability updated.');
+      } catch (e) {
+        availAlert.textContent = e.message || 'Failed to update availability.';
+        availAlert.classList.remove('hide');
+      }
+    };
+  </script>
+</body>
+</html>

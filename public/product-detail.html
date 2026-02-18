@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product – Neem Sourcing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="dashboard-shop.html">Neem Sourcing</a>
+    <div class="nav-links">
+      <a href="products.html">Products</a>
+      <a href="map.html">Map</a>
+      <a href="chat.html">Chat</a>
+      <a href="dashboard-shop.html">Dashboard</a>
+      <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+    </div>
+  </nav>
+
+  <div class="container-narrow page">
+    <a href="products.html" class="text-muted text-small d-inline-block mb-2">← Back to products</a>
+    <div id="content">Loading…</div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    if (!requireAuth('shop')) throw new Error('auth');
+    document.getElementById('logoutBtn').onclick = () => { clearAuth(); location.href = 'index.html'; };
+    const id = new URLSearchParams(location.search).get('id');
+    if (!id) { document.getElementById('content').innerHTML = 'Product not found.'; throw new Error('no id'); }
+    api('/api/products/' + id).then(p => {
+      const trust = p.supplierTrustScore ?? 50;
+      const trustCl = trustClass(trust);
+      const avail = p.availability;
+      const hasMoisture = p.moistureContentPercent != null && p.moistureContentPercent !== '';
+      const hasPpm = p.ppmValue != null && p.ppmValue !== '';
+      const specRows = (p.specifications || []).map(s => `<tr><td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.value)}${s.unit ? ' ' + escapeHtml(s.unit) : ''}</td></tr>`).join('');
+      const hasSpecs = hasMoisture || hasPpm || (p.specifications && p.specifications.length > 0);
+      document.getElementById('content').innerHTML = `
+        <div class="card card-body">
+          <div class="d-flex justify-between align-center flex-wrap gap-2 mb-3">
+            <h1 class="mb-0">${escapeHtml(p.name)}</h1>
+            <span class="trust-badge ${trustCl}">Trust score ★ ${trust}</span>
+          </div>
+          ${p.category ? `<p class="text-muted">${escapeHtml(p.category)}</p>` : ''}
+          ${p.description ? `<p>${escapeHtml(p.description)}</p>` : ''}
+          <hr>
+          <p><strong>Price:</strong> ₹${Number(p.pricePerUnit || 0).toLocaleString()} per ${escapeHtml(p.unit || 'kg')}</p>
+          <p><strong>Min order:</strong> ${p.minOrderQuantity || 1} ${p.unit || 'kg'}</p>
+          ${avail ? `<p><strong>Available quantity:</strong> ${avail.quantityAvailable} ${avail.unit || 'kg'}</p>` : ''}
+          ${hasSpecs ? `<hr><h3>Quality &amp; specifications</h3><p class="text-muted text-small">Consider these when comparing suppliers.</p><table class="table table-sm"><tbody>${hasMoisture ? `<tr><td>Moisture content</td><td>≤ ${Number(p.moistureContentPercent)}%</td></tr>` : ''}${hasPpm ? `<tr><td>${escapeHtml(p.ppmLabel || 'PPM')}</td><td>${Number(p.ppmValue)} ppm</td></tr>` : ''}${specRows}</tbody></table>` : ''}
+          <hr>
+          <h3>Supplier</h3>
+          <p class="mb-1"><strong>${escapeHtml(p.supplierId?.businessName || p.supplierId?.name || '')}</strong></p>
+          ${p.supplierId?.email ? `<p class="text-small text-muted">${escapeHtml(p.supplierId.email)}</p>` : ''}
+          ${p.supplierId?.phone ? `<p class="text-small">${escapeHtml(p.supplierId.phone)}</p>` : ''}
+          <a href="chat.html?with=${p.supplierId?._id}" class="btn btn-primary mt-2">Message supplier</a>
+        </div>`;
+    }).catch(() => {
+      document.getElementById('content').innerHTML = '<div class="alert alert-danger">Product not found or unavailable.</div>';
+    });
+    function escapeHtml(s) {
+      if (!s) return '';
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>

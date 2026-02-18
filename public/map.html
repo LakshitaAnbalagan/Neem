@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supplier map – Neem Sourcing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+  <style>
+    .map-popup { font-family: var(--font, inherit); padding: 0.25rem; min-width: 11.25rem; }
+    .map-popup .trust-badge { font-size: 0.75rem; }
+    #map { min-height: var(--map-height, 25rem); }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="#" id="navBrand">Neem Sourcing</a>
+    <div class="nav-links">
+      <a href="products.html" id="navProducts">Products</a>
+      <a href="map.html">Map</a>
+      <a href="chat.html" id="navChat">Chat</a>
+      <a href="#" id="navDashboard">Dashboard</a>
+      <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+    </div>
+  </nav>
+
+  <div class="container-wide page">
+    <h1 class="page-title">Supplier locations</h1>
+    <p class="text-muted mb-3">View where neem suppliers are located to choose nearby sourcing options.</p>
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div id="map" class="map-container" style="height: 30rem;"></div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card card-body">
+          <h3 class="card-title">Suppliers</h3>
+          <div id="supplierList" class="text-muted">Loading…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/map.js"></script>
+</body>
+</html>

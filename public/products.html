@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products – Neem Sourcing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="#" id="navBrand">Neem Sourcing</a>
+    <div class="nav-links">
+      <a href="#" id="navProducts">Products</a>
+      <a href="map.html" id="navMap">Map</a>
+      <a href="chat.html" id="navChat">Chat</a>
+      <a href="#" id="navDashboard">Dashboard</a>
+      <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+    </div>
+  </nav>
+
+  <div class="container-wide page">
+    <h1 class="page-title d-flex align-center justify-between flex-wrap gap-2">
+      <span id="pageTitle">Neem products</span>
+      <a href="dashboard-supplier.html" class="btn btn-primary btn-sm hide" id="addProductLink">Add product</a>
+    </h1>
+    <div class="card card-body mb-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label">Search neem products</label>
+          <input type="text" id="search" class="form-control" placeholder="e.g. Neem oil, oil for pesticide, cake for soil">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Neem category</label>
+          <input type="text" id="category" class="form-control" placeholder="Oil, Kernels, Leaves">
+        </div>
+        <div class="col-md-2" id="filterMaxMoistureWrap">
+          <label class="form-label">Max moisture (%)</label>
+          <input type="number" id="maxMoisture" class="form-control" min="0" max="100" step="0.5" placeholder="e.g. 12">
+        </div>
+        <div class="col-md-2" id="filterMinPpmWrap">
+          <label class="form-label">Min PPM</label>
+          <input type="number" id="minPpm" class="form-control" min="0" step="1" placeholder="e.g. 1000">
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-primary w-100" id="btnSearch">Search</button>
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-2 mt-2" id="smartSearchWrap">
+        <label class="form-check-label text-small">
+          <input type="checkbox" class="form-check-input" id="smartSearch" title="Use AI to interpret your search (e.g. &quot;oil for pesticide&quot; → neem oil)">
+          <span class="text-muted">Smart search</span> <span class="text-primary">(AI)</span>
+        </label>
+      </div>
+      <p class="text-small text-muted mt-2 mb-0">Use moisture and PPM filters to find products that meet your quality requirements.</p>
+    </div>
+    <div class="alert alert-info d-flex align-center gap-2" id="seasonBanner">
+      <span class="season-badge" id="seasonBadge">Season</span>
+      <span id="seasonText">Loading seasonal tip…</span>
+    </div>
+    <div id="productList" class="row g-3"></div>
+    <p class="text-muted text-small mt-3" id="emptyState"></p>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    const user = getUser();
+    const isSupplier = user?.role === 'supplier';
+    const isMyProducts = new URLSearchParams(location.search).get('my') === '1';
+
+    document.getElementById('navBrand').href = isSupplier ? 'dashboard-supplier.html' : 'dashboard-shop.html';
+    document.getElementById('navDashboard').href = isSupplier ? 'dashboard-supplier.html' : 'dashboard-shop.html';
+    document.getElementById('navDashboard').textContent = 'Dashboard';
+    if (!isSupplier) document.getElementById('addProductLink').classList.add('hide');
+    else document.getElementById('addProductLink').classList.remove('hide');
+    document.getElementById('pageTitle').textContent = isMyProducts ? 'My products' : 'Neem products';
+    document.getElementById('filterMaxMoistureWrap').style.display = isMyProducts ? 'none' : '';
+    document.getElementById('filterMinPpmWrap').style.display = isMyProducts ? 'none' : '';
+    document.getElementById('smartSearchWrap').style.display = isMyProducts ? 'none' : '';
+    document.getElementById('seasonBadge').textContent = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][currentSeasonMonth() - 1];
+    document.getElementById('seasonText').textContent = getSeasonalTip(currentSeasonMonth());
+
+    if (!isLoggedIn()) location.href = 'login.html';
+    document.getElementById('logoutBtn').onclick = () => { clearAuth(); location.href = 'index.html'; };
+
+    async function loadProducts() {
+      const listEl = document.getElementById('productList');
+      const emptyEl = document.getElementById('emptyState');
+      listEl.innerHTML = '<div class="col-12 text-muted">Loading…</div>';
+      emptyEl.textContent = '';
+      try {
+        const params = new URLSearchParams();
+        if (isMyProducts && user?._id) params.set('supplierId', user._id);
+        else {
+          if (document.getElementById('search').value.trim()) params.set('q', document.getElementById('search').value.trim());
+          if (document.getElementById('category').value.trim()) params.set('category', document.getElementById('category').value.trim());
+          if (document.getElementById('smartSearch')?.checked) params.set('smart', '1');
+          const maxM = document.getElementById('maxMoisture')?.value?.trim();
+          if (maxM) params.set('maxMoisture', maxM);
+          const minP = document.getElementById('minPpm')?.value?.trim();
+          if (minP) params.set('minPpm', minP);
+        }
+        const products = await api('/api/products?' + params.toString());
+        listEl.innerHTML = '';
+        if (!products.length) {
+          emptyEl.textContent = 'No products found. Try different filters or add a product (suppliers).';
+          return;
+        }
+        products.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'col-md-6 col-lg-4';
+          const trust = p.supplierTrustScore ?? 50;
+          const trustCl = trustClass(trust);
+          const specParts = [];
+          if (p.moistureContentPercent != null && p.moistureContentPercent !== '') specParts.push('Moisture ≤' + Number(p.moistureContentPercent) + '%');
+          if (p.ppmValue != null && p.ppmValue !== '') specParts.push((p.ppmLabel || 'PPM') + ' ' + Number(p.ppmValue) + ' ppm');
+          const specLine = specParts.length ? '<p class="text-small text-muted mb-2">' + specParts.join(' · ') + '</p>' : '';
+          card.innerHTML = `
+            <div class="card card-body h-100">
+              <div class="d-flex justify-between align-center mb-2">
+                <h3 class="card-title mb-0">${escapeHtml(p.name)}</h3>
+                ${!isMyProducts && p.supplierId ? `<span class="trust-badge ${trustCl}">★ ${trust}</span>` : ''}
+              </div>
+              ${p.category ? `<p class="text-muted text-small mb-1">${escapeHtml(p.category)}</p>` : ''}
+              ${specLine}
+              ${p.description ? `<p class="text-small mb-2">${escapeHtml(p.description.slice(0, 80))}${p.description.length > 80 ? '…' : ''}</p>` : ''}
+              <p class="mb-2"><strong>₹${Number(p.pricePerUnit || 0).toLocaleString()}</strong> / ${escapeHtml(p.unit || 'kg')} · Min ${p.minOrderQuantity || 1} ${p.unit || 'kg'}</p>
+              ${p.supplierId ? `<p class="text-small text-muted mb-2">${escapeHtml(p.supplierId.businessName || p.supplierId.name || '')}</p>` : ''}
+              <div class="d-flex gap-2 mt-auto">
+                ${isMyProducts
+                  ? `<a href="product-edit.html?id=${p._id}" class="btn btn-outline btn-sm">Edit</a>`
+                  : `<a href="product-detail.html?id=${p._id}" class="btn btn-primary btn-sm">View & contact</a>`
+                }
+              </div>
+            </div>`;
+          listEl.appendChild(card);
+        });
+      } catch (e) {
+        listEl.innerHTML = '';
+        emptyEl.textContent = 'Could not load products. Please log in again or try later.';
+      }
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    document.getElementById('btnSearch').onclick = loadProducts;
+    document.getElementById('search').onkeydown = (e) => e.key === 'Enter' && loadProducts();
+    loadProducts();
+  </script>
+</body>
+</html>
