@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neem Sourcing – India's Premier B2B Neem Procurement Platform</title>
+  <meta name="description"
+    content="Connect with verified neem suppliers across India. Source neem oil, kernels, cake, and leaves with AI-driven insights, transparent trust scores, and real-time chat.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+  <style>
+    /* Page-specific animations & extras */
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.94);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .anim-slide-up {
+      animation: slideInUp 0.65s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    .anim-fade {
+      animation: fadeIn 0.65s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    .anim-scale-in {
+      animation: scaleIn 0.65s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.35s;
+    }
+
+    .delay-4 {
+      animation-delay: 0.5s;
+    }
+
+    .delay-5 {
+      animation-delay: 0.65s;
+    }
+
+    /* Scroll reveal (JS-driven) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1), transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1.visible {
+      transition-delay: 0.1s;
+    }
+
+    .reveal-delay-2.visible {
+      transition-delay: 0.2s;
+    }
+
+    .reveal-delay-3.visible {
+      transition-delay: 0.3s;
+    }
+
+    /* Hero botanical SVG shimmer */
+    .hero-leaf svg path {
+      fill: var(--green-600);
+    }
+
+    /* Neem market ticker */
+    .ticker-wrap {
+      background: var(--gold-100);
+      border-top: 1px solid rgba(184, 136, 26, 0.2);
+      border-bottom: 1px solid rgba(184, 136, 26, 0.2);
+      padding: 0.65rem 0;
+      overflow: hidden;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 3rem;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+    }
+
+    @keyframes ticker {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    .ticker-item {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--gold-500);
+      flex-shrink: 0;
+    }
+
+    .ticker-item span {
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-left: 0.375rem;
+    }
+
+    /* Section divider wave */
+    .wave-divider {
+      line-height: 0;
+    }
+
+    .wave-divider svg {
+      display: block;
+      width: 100%;
+    }
+
+    /* Highlight pill in text */
+    .text-highlight {
+      position: relative;
+      display: inline-block;
+    }
+
+    .text-highlight::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 4px;
+      height: 8px;
+      background: rgba(45, 122, 74, 0.15);
+      border-radius: 4px;
+      z-index: -1;
+    }
+
+    /* Insight carousel */
+    .insight-wrap {
+      position: relative;
+      min-height: 1.5rem;
+    }
+
+    .insight-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-style: italic;
+      transition: opacity 0.4s;
+    }
+
+    /* Product card hover glow */
+    .product-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-xl);
+      opacity: 0;
+      transition: opacity var(--transition);
+      box-shadow: 0 0 0 2px var(--green-400, #4c9e6b);
+    }
+
+    .product-card:hover::before {
+      opacity: 1;
+    }
+
+    /* ── TOAST NOTIFICATIONS ─────────────────────── */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: white;
+      border-radius: 1rem;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 8px 32px rgba(10, 46, 26, 0.18), 0 2px 8px rgba(10, 46, 26, 0.08);
+      border: 1px solid rgba(10, 46, 26, 0.08);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.875rem;
+      min-width: 19rem;
+      max-width: 22rem;
+      pointer-events: all;
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+    }
+
+    .toast.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .toast.hide {
+      transform: translateX(120%);
+      opacity: 0;
+    }
+
+    .toast-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .toast-icon.green {
+      background: linear-gradient(135deg, #d4edda, #a8d5b5);
+    }
+
+    .toast-icon.gold {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+    }
+
+    .toast-icon.blue {
+      background: linear-gradient(135deg, #dbeafe, #93c5fd);
+    }
+
+    .toast-icon.red {
+      background: linear-gradient(135deg, #fee2e2, #fca5a5);
+    }
+
+    .toast-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toast-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 0.2rem;
+    }
+
+    .toast-msg {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .toast-close {
+      background: none;
+      border: none;
+      font-size: 1.125rem;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: color 0.2s;
+    }
+
+    .toast-close:hover {
+      color: var(--text-dark);
+    }
+
+    .toast-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--green-500), var(--gold-400));
+      border-radius: 0 0 1rem 1rem;
+      animation: toastProgress linear forwards;
+    }
+
+    @keyframes toastProgress {
+      from {
+        width: 100%
+      }
+
+      to {
+        width: 0
+      }
+    }
+
+    /* ── LIVE ACTIVITY FEED ──────────────────────── */
+    .activity-feed {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      z-index: 9998;
+      pointer-events: none;
+    }
+
+    .activity-item {
+      background: white;
+      border-radius: 0.875rem;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 4px 20px rgba(10, 46, 26, 0.12);
+      border: 1px solid rgba(10, 46, 26, 0.07);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.8125rem;
+      max-width: 18rem;
+      transform: translateX(-120%);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    }
+
+    .activity-item.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .activity-item.hide {
+      transform: translateX(-120%);
+      opacity: 0;
+    }
+
+    .activity-avatar {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .activity-text {
+      color: var(--text-medium);
+      line-height: 1.4;
+    }
+
+    .activity-text strong {
+      color: var(--text-dark);
+    }
+
+    .activity-time {
+      color: var(--text-light);
+      font-size: 0.72rem;
+      white-space: nowrap;
+    }
+
+    /* ── FLOATING CHAT WIDGET ────────────────────── */
+    .chat-widget-btn {
+      position: fixed;
+      bottom: 1.75rem;
+      right: 1.75rem;
+      z-index: 9997;
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-600), var(--green-800));
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.375rem;
+      box-shadow: 0 4px 20px rgba(27, 94, 52, 0.4);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+    }
+
+    .chat-widget-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 28px rgba(27, 94, 52, 0.5);
+    }
+
+    .chat-widget-btn .chat-notif {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 1rem;
+      height: 1rem;
+      background: var(--gold-400);
+      border-radius: 50%;
+      border: 2px solid white;
+      font-size: 0.55rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .chat-widget-panel {
+      position: fixed;
+      bottom: 5.5rem;
+      right: 1.75rem;
+      z-index: 9996;
+      width: 20rem;
+      background: white;
+      border-radius: 1.25rem;
+      box-shadow: 0 16px 48px rgba(10, 46, 26, 0.2);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      transform: scale(0.85) translateY(20px);
+      opacity: 0;
+      transform-origin: bottom right;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    .chat-widget-panel.open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .cwp-header {
+      background: linear-gradient(135deg, var(--green-700), var(--green-900));
+      padding: 1.125rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .cwp-avatar {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .cwp-name {
+      font-weight: 700;
+      color: white;
+      font-size: 0.9375rem;
+    }
+
+    .cwp-status {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .cwp-online-dot {
+      width: 6px;
+      height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+    }
+
+    .cwp-body {
+      padding: 1rem 1.25rem;
+      max-height: 14rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+
+    .cwp-bubble {
+      padding: 0.625rem 0.875rem;
+      border-radius: 1rem;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      max-width: 85%;
+    }
+
+    .cwp-bubble.bot {
+      background: var(--cream-200);
+      color: var(--text-dark);
+      border-bottom-left-radius: 0.25rem;
+      align-self: flex-start;
+    }
+
+    .cwp-bubble.user {
+      background: var(--green-700);
+      color: white;
+      border-bottom-right-radius: 0.25rem;
+      align-self: flex-end;
+    }
+
+    .cwp-footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .cwp-input {
+      flex: 1;
+      border: 1.5px solid var(--border);
+      border-radius: 2rem;
+      padding: 0.5rem 0.875rem;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .cwp-input:focus {
+      border-color: var(--green-500);
+    }
+
+    .cwp-send {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 50%;
+      background: var(--green-700);
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .cwp-send:hover {
+      background: var(--green-800);
+    }
+
+    /* ── WELCOME MODAL ───────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 46, 26, 0.55);
+      backdrop-filter: blur(6px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-box {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2.5rem 2rem;
+      max-width: 26rem;
+      width: 100%;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      text-align: center;
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-leaf {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: block;
+      animation: floatLeaf 4s ease-in-out infinite;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--green-900);
+      margin-bottom: 0.625rem;
+      line-height: 1.2;
+    }
+
+    .modal-subtitle {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--cream-200);
+      border: none;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      background: var(--cream-300);
+      color: var(--text-dark);
+    }
+
+    /* ── BACK TO TOP ─────────────────────────────── */
+    .back-to-top {
+      position: fixed;
+      bottom: 6rem;
+      right: 1.75rem;
+      z-index: 9995;
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 50%;
+      background: white;
+      border: 1.5px solid var(--border);
+      color: var(--green-700);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.3s, transform 0.3s, background 0.2s;
+      pointer-events: none;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .back-to-top:hover {
+      background: var(--green-700);
+      color: white;
+    }
+
+    /* ── NEW ARRIVAL PULSE BADGE ─────────────────── */
+    .new-arrival-badge {
+      position: fixed;
+      top: 5.5rem;
+      right: 1.25rem;
+      z-index: 9994;
+      background: linear-gradient(135deg, var(--green-600), var(--green-800));
+      color: white;
+      border-radius: 0.875rem;
+      padding: 0.75rem 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      box-shadow: 0 4px 20px rgba(27, 94, 52, 0.3);
+      cursor: pointer;
+      transform: translateX(120%);
+      opacity: 0;
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      max-width: 17rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .new-arrival-badge.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .nab-pulse {
+      width: 0.625rem;
+      height: 0.625rem;
+      background: #4ade80;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .nab-pulse::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: rgba(74, 222, 128, 0.4);
+      animation: pulse-ring 1.5s ease-out infinite;
+    }
+
+    @keyframes pulse-ring {
+      from {
+        transform: scale(0.8);
+        opacity: 1;
+      }
+
+      to {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+
+    .nab-text {
+      font-size: 0.8125rem;
+    }
+
+    .nab-title {
+      font-weight: 700;
+      font-size: 0.875rem;
+    }
+
+    .nab-sub {
+      font-size: 0.72rem;
+      opacity: 0.8;
+    }
+
+    .nab-close {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0;
+      line-height: 1;
+      margin-left: auto;
+      flex-shrink: 0;
+      transition: color 0.2s;
+    }
+
+    .nab-close:hover {
+      color: white;
+    }
+
+    /* ── VISITOR COUNTER BADGE ───────────────────── */
+    .visitor-badge {
+      position: fixed;
+      top: 5.5rem;
+      left: 1.25rem;
+      z-index: 9993;
+      background: white;
+      border-radius: 0.875rem;
+      padding: 0.625rem 1rem;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-light);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transform: translateX(-120%);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 1.5s, opacity 0.3s ease 1.5s;
+    }
+
+    .visitor-badge.show {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    .vb-dot {
+      width: 8px;
+      height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+
+    .vb-num {
+      font-weight: 700;
+      color: var(--green-700);
+      font-size: 0.9rem;
+    }
+
+    /* Avatar colors */
+    .av-green {
+      background: linear-gradient(135deg, #2d7a4a, #0a2e1a);
+    }
+
+    .av-teal {
+      background: linear-gradient(135deg, #0891b2, #0e7490);
+    }
+
+    .av-amber {
+      background: linear-gradient(135deg, #d97706, #b45309);
+    }
+
+    .av-indigo {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+    }
+
+    .av-rose {
+      background: linear-gradient(135deg, #e11d48, #be123c);
+    }
+
+    /* Marquee trust line */
+    .trust-marquee {
+      overflow: hidden;
+      padding: 1rem 0;
+    }
+
+    .trust-marquee-inner {
+      display: flex;
+      gap: 2.5rem;
+      animation: ticker 20s linear infinite;
+      white-space: nowrap;
+    }
+
+    .trust-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .trust-tag svg {
+      width: 1rem;
+      height: 1rem;
+      color: var(--green-500);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════ NAVBAR ═════════════════════════════════════ -->
+  <nav class="site-nav" id="siteNav">
+    <div class="container">
+      <div class="nav-inner">
+        <a class="nav-logo" href="index.html">
+          <div class="nav-logo-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 8Z" />
+            </svg>
+          </div>
+          Neem Sourcing
+        </a>
+
+        <div class="nav-links">
+          <a href="products.html" class="nav-link">Products</a>
+          <a href="#how-it-works" class="nav-link">How it works</a>
+          <a href="#features" class="nav-link">Features</a>
+          <a href="login.html" class="nav-link">Log in</a>
+          <a href="register.html" class="nav-cta">Get Started →</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════ TICKER ════════════════════════════════════════ -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner" id="tickerInner">
+      <div class="ticker-item">🌿 Neem Oil Cold Pressed <span>Available – 48 MT</span></div>
+      <div class="ticker-item">🌱 Neem Kernels (2025 harvest) <span>In Season</span></div>
+      <div class="ticker-item">🟫 Neem Seed Cake <span>Bulk orders open</span></div>
+      <div class="ticker-item">🍃 Neem Leaves (Dried) <span>12 verified suppliers</span></div>
+      <div class="ticker-item">⚡ AI pricing insights <span>Updated daily</span></div>
+      <div class="ticker-item">🔒 Trust Score avg <span>82 / 100</span></div>
+      <!-- duplicate for seamless loop -->
+      <div class="ticker-item">🌿 Neem Oil Cold Pressed <span>Available – 48 MT</span></div>
+      <div class="ticker-item">🌱 Neem Kernels (2025 harvest) <span>In Season</span></div>
+      <div class="ticker-item">🟫 Neem Seed Cake <span>Bulk orders open</span></div>
+      <div class="ticker-item">🍃 Neem Leaves (Dried) <span>12 verified suppliers</span></div>
+      <div class="ticker-item">⚡ AI pricing insights <span>Updated daily</span></div>
+      <div class="ticker-item">🔒 Trust Score avg <span>82 / 100</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ HERO ══════════════════════════════════════════ -->
+  <section class="hero">
+    <!-- Decorative background -->
+    <div class="hero-bg-decor">
+      <div class="hero-bg-circle c1"></div>
+      <div class="hero-bg-circle c2"></div>
+      <!-- Botanical SVG leaf -->
+      <div class="hero-leaf l1">
+        <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M100 280 C20 200 10 120 40 60 C55 30 80 10 100 5 C120 10 145 30 160 60 C190 120 180 200 100 280Z"
+            fill="#2d7a4a" />
+          <path d="M100 280 L100 5" stroke="#1b5e34" stroke-width="2" opacity="0.5" />
+          <path d="M100 100 C70 90 50 70 40 60" stroke="#1b5e34" stroke-width="1.5" opacity="0.4" />
+          <path d="M100 100 C130 90 150 70 160 60" stroke="#1b5e34" stroke-width="1.5" opacity="0.4" />
+          <path d="M100 160 C65 148 45 125 38 110" stroke="#1b5e34" stroke-width="1.5" opacity="0.4" />
+          <path d="M100 160 C135 148 155 125 162 110" stroke="#1b5e34" stroke-width="1.5" opacity="0.4" />
+          <path d="M100 220 C72 208 55 185 50 168" stroke="#1b5e34" stroke-width="1.5" opacity="0.4" />
+          <path d="M100 220 C128 208 145 185 150 168" stroke="#1b5e34" stroke-width="1.5" opacity="0.4" />
+        </svg>
+      </div>
+      <div class="hero-leaf l2">
+        <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M100 280 C20 200 10 120 40 60 C55 30 80 10 100 5 C120 10 145 30 160 60 C190 120 180 200 100 280Z"
+            fill="#b8881a" />
+        </svg>
+      </div>
+      <div class="hero-leaf l3">
+        <svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M100 280 C20 200 10 120 40 60 C55 30 80 10 100 5 C120 10 145 30 160 60 C190 120 180 200 100 280Z"
+            fill="#2d7a4a" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="hero-inner">
+      <!-- LEFT: Copy -->
+      <div class="hero-content">
+        <div class="hero-badge anim-fade delay-1">
+          <span class="hero-badge-dot"></span>
+          India's #1 Neem B2B Platform
+        </div>
+
+        <h1 class="hero-title anim-slide-up delay-2">
+          Source <em>Premium Neem</em><br>with Confidence
+        </h1>
+
+        <p class="hero-subtitle anim-slide-up delay-3">
+          Connect with 50+ verified suppliers. Get real-time trust scores,
+          AI-powered seasonal insights, and negotiate pricing in one seamless workspace.
+        </p>
+
+        <div class="hero-actions anim-slide-up delay-4">
+          <a href="register.html?role=shop" class="btn btn-primary btn-lg" id="heroJoinBuyer">
+            Start Sourcing
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+          <a href="register.html?role=supplier" class="btn btn-outline btn-lg" id="heroJoinSupplier">List Your
+            Supply</a>
+        </div>
+
+        <div class="hero-trust-row anim-fade delay-5">
+          <div class="hero-trust-item">
+            <svg class="hero-trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+            Verified Suppliers
+          </div>
+          <div class="hero-trust-item">
+            <svg class="hero-trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            Live Stock Updates
+          </div>
+          <div class="hero-trust-item">
+            <svg class="hero-trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+            AI Sourcing Assistant
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Visual card -->
+      <div class="hero-visual anim-scale-in delay-3">
+        <!-- Floating stat cards -->
+        <div class="hero-float-card fc1">
+          <div class="float-card-value">82<span style="font-size:1rem;color:var(--gold-400);">★</span></div>
+          <div class="float-card-label">Avg. Trust Score</div>
+        </div>
+        <div class="hero-float-card fc2">
+          <div class="float-card-value">48 MT</div>
+          <div class="float-card-label">Available This Week</div>
+        </div>
+
+        <!-- Main dashboard card -->
+        <div class="hero-card-main">
+          <div class="hero-card-label">Live Sourcing Board</div>
+
+          <div class="hero-product-list">
+            <div class="hero-product-item">
+              <div class="hero-product-emoji">🫒</div>
+              <div class="hero-product-info">
+                <div class="hero-product-name">Cold Pressed Neem Oil</div>
+                <div class="hero-product-meta">Rajasthan · 18 MT available</div>
+              </div>
+              <span class="hero-product-badge available">In Stock</span>
+            </div>
+
+            <div class="hero-product-item">
+              <div class="hero-product-emoji">🌱</div>
+              <div class="hero-product-info">
+                <div class="hero-product-name">Neem Kernels A-Grade</div>
+                <div class="hero-product-meta">Gujarat · 12 MT available</div>
+              </div>
+              <span class="hero-product-badge available">In Season</span>
+            </div>
+
+            <div class="hero-product-item">
+              <div class="hero-product-emoji">🟫</div>
+              <div class="hero-product-info">
+                <div class="hero-product-name">Neem Seed Cake</div>
+                <div class="hero-product-meta">Tamil Nadu · 8 MT available</div>
+              </div>
+              <span class="hero-product-badge limited">Limited</span>
+            </div>
+
+            <div class="hero-product-item">
+              <div class="hero-product-emoji">🍃</div>
+              <div class="hero-product-info">
+                <div class="hero-product-name">Dried Neem Leaves</div>
+                <div class="hero-product-meta">Andhra Pradesh · 5 MT</div>
+              </div>
+              <span class="hero-product-badge available">In Stock</span>
+            </div>
+          </div>
+
+          <!-- Insight rotating -->
+          <div style="margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--border-light);">
+            <div
+              style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-light);margin-bottom:0.375rem;">
+              💡 AI Insight</div>
+            <div class="insight-text" id="insightText">Neem oil prices peak in May–June; secure forward contracts now
+              for the best rates.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ STATS BAND ══════════════════════════════════════════ -->
+  <div class="stats-band">
+    <div class="container">
+      <div class="stats-inner">
+        <div class="stat-item">
+          <div class="stat-number"><span id="cntSuppliers">0</span>+</div>
+          <div class="stat-label">Verified Suppliers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number"><span id="cntSkus">0</span>+</div>
+          <div class="stat-label">Active Listings</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number"><span id="cntTons">0</span> MT</div>
+          <div class="stat-label">Sourced This Month</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number"><span style="color:var(--gold-300);">82</span>/100</div>
+          <div class="stat-label">Avg. Trust Score</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number"><span id="cntCountries">0</span></div>
+          <div class="stat-label">States Served</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ PRODUCTS SECTION ════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <div class="section-eyebrow">Our Categories</div>
+        <h2 class="section-title">Everything Neem, <em>All in One Place</em></h2>
+        <p class="section-subtitle">From raw kernels to refined oils — discover the full spectrum of neem raw materials
+          sourced directly from verified farmers and processors.</p>
+      </div>
+
+      <div class="products-grid">
+        <div class="product-card pc-oil reveal reveal-delay-1">
+          <div class="product-card-icon"><span>🫒</span></div>
+          <div class="product-card-arrow">→</div>
+          <div class="product-card-body">
+            <div class="product-card-name">Neem Oil</div>
+            <div class="product-card-desc">Cold-pressed and solvent-extracted neem oil for agriculture, pharma, and
+              cosmetics.</div>
+            <span class="product-card-season">🌿 November – March peak</span>
+          </div>
+        </div>
+
+        <div class="product-card pc-kernel reveal reveal-delay-2">
+          <div class="product-card-icon"><span>🌱</span></div>
+          <div class="product-card-arrow">→</div>
+          <div class="product-card-body">
+            <div class="product-card-name">Neem Kernels</div>
+            <div class="product-card-desc">High-azadirachtin kernels, A-grade and B-grade, for oil extraction and
+              biopesticide production.</div>
+            <span class="product-card-season">🌾 August – October harvest</span>
+          </div>
+        </div>
+
+        <div class="product-card pc-cake reveal reveal-delay-3">
+          <div class="product-card-icon"><span>🟫</span></div>
+          <div class="product-card-arrow">→</div>
+          <div class="product-card-body">
+            <div class="product-card-name">Neem Seed Cake</div>
+            <div class="product-card-desc">Organic fertilizer and soil conditioner — rich in nitrogen and natural
+              pesticide compounds.</div>
+            <span class="product-card-season">📦 Year-round availability</span>
+          </div>
+        </div>
+
+        <div class="product-card pc-leaf reveal reveal-delay-3">
+          <div class="product-card-icon"><span>🍃</span></div>
+          <div class="product-card-arrow">→</div>
+          <div class="product-card-body">
+            <div class="product-card-name">Neem Leaves</div>
+            <div class="product-card-desc">Fresh and dried neem leaves for pharmaceutical, ayurvedic, and cosmetic
+              formulations.</div>
+            <span class="product-card-season">🌿 Fresh: Feb–May</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:2.5rem;" class="reveal">
+        <a href="products.html" class="btn btn-outline btn-lg" id="browseAllBtn">Browse All Listings →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════ TRUST MARQUEE ════════════════════════════════════════════ -->
+  <div
+    style="background:var(--cream-200);border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light);">
+    <div class="trust-marquee">
+      <div class="trust-marquee-inner">
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4" />
+            <path d="M12 3a9 9 0 100 18A9 9 0 0012 3z" />
+          </svg>Supplier Verified</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>Quality Assured</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>Real-time Stock</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>AI Powered</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+          </svg>50+ Suppliers</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.862 9.862 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>Integrated Chat</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+          </svg>Map Discovery</span>
+        <!-- duplicate -->
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 12l2 2 4-4" />
+            <path d="M12 3a9 9 0 100 18A9 9 0 0012 3z" />
+          </svg>Supplier Verified</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>Quality Assured</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>Real-time Stock</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>AI Powered</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0" />
+          </svg>50+ Suppliers</span>
+        <span class="trust-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.862 9.862 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>Integrated Chat</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ FEATURES SECTION ════════════════════════════════════ -->
+  <section class="section section-alt" id="features">
+    <div class="container">
+      <div class="features-layout">
+        <!-- Visual side -->
+        <div class="features-visual reveal">
+          <div class="features-card-main">
+            <div class="features-card-header">
+              <span class="features-card-title">Top Verified Suppliers</span>
+              <span class="live-badge"><span class="live-dot"></span>Live</span>
+            </div>
+            <div class="supplier-list">
+              <div class="supplier-row">
+                <div class="supplier-avatar av-green">AG</div>
+                <div class="supplier-info">
+                  <div class="supplier-name">Agro Green Exports</div>
+                  <div class="supplier-location">📍 Rajasthan · Neem Oil, Kernels</div>
+                </div>
+                <span class="trust-score">96 ★</span>
+              </div>
+              <div class="supplier-row">
+                <div class="supplier-avatar av-teal">NB</div>
+                <div class="supplier-info">
+                  <div class="supplier-name">NatBio Supplies</div>
+                  <div class="supplier-location">📍 Gujarat · Neem Cake, Leaves</div>
+                </div>
+                <span class="trust-score">91 ★</span>
+              </div>
+              <div class="supplier-row">
+                <div class="supplier-avatar av-amber">SK</div>
+                <div class="supplier-info">
+                  <div class="supplier-name">SriKrishna Organics</div>
+                  <div class="supplier-location">📍 Tamil Nadu · Kernels, Oil</div>
+                </div>
+                <span class="trust-score">88 ★</span>
+              </div>
+              <div class="supplier-row">
+                <div class="supplier-avatar av-indigo">VF</div>
+                <div class="supplier-info">
+                  <div class="supplier-name">VedFarm Naturals</div>
+                  <div class="supplier-location">📍 Andhra Pradesh · All Products</div>
+                </div>
+                <span class="trust-score">85 ★</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="features-mini-card mc1">
+            <div class="mc-value">4.8<span style="color:var(--gold-400);font-size:1rem;">★</span></div>
+            <div class="mc-label">Platform Rating</div>
+          </div>
+          <div class="features-mini-card mc2">
+            <div class="mc-value" style="color:var(--green-700);">24/7</div>
+            <div class="mc-label">AI Chat Support</div>
+          </div>
+        </div>
+
+        <!-- Content side -->
+        <div class="reveal reveal-delay-2">
+          <div class="section-eyebrow">Why Choose Us</div>
+          <h2 class="section-title">Built for the <em>Modern Neem Business</em></h2>
+          <p style="font-size:1rem;color:var(--text-muted);line-height:1.7;margin-bottom:2.5rem;">
+            Every feature on our platform is designed specifically for the neem supply chain — no generic marketplace
+            tools.
+          </p>
+
+          <div class="features-list">
+            <div class="feature-item">
+              <div class="feature-icon-wrap fi-green">🔒</div>
+              <div class="feature-text">
+                <div class="feature-name">Real-time Trust Scores</div>
+                <div class="feature-desc">Every supplier is rated on delivery reliability, product quality, and
+                  communication — so you always know who you're dealing with.</div>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon-wrap fi-gold">🤖</div>
+              <div class="feature-text">
+                <div class="feature-name">AI Sourcing Assistant</div>
+                <div class="feature-desc">Ask about pricing, seasonal availability, supplier comparisons, or market
+                  trends — and get instant, expert answers 24/7.</div>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon-wrap fi-blue">🗺️</div>
+              <div class="feature-text">
+                <div class="feature-name">Map-based Supplier Discovery</div>
+                <div class="feature-desc">Visualize suppliers by region, product type, and trust score on an interactive
+                  map to shortlist the right partners fast.</div>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon-wrap fi-purple">💬</div>
+              <div class="feature-text">
+                <div class="feature-name">In-platform Negotiation Chat</div>
+                <div class="feature-desc">Message suppliers, share specs, and agree on pricing — all tracked in one
+                  place, no emails or WhatsApp needed.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ HOW IT WORKS ════════════════════════════════════════ -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <div class="section-eyebrow">Simple Process</div>
+        <h2 class="section-title">Source Neem in <em>Three Steps</em></h2>
+        <p class="section-subtitle">From sign-up to confirmed supply in under 24 hours — our streamlined workflow gets
+          you sourcing faster.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card reveal reveal-delay-1">
+          <div class="step-number">1</div>
+          <div class="step-icon">🧑‍💼</div>
+          <div class="step-title">Create Your Account</div>
+          <div class="step-desc">Sign up as a buyer or supplier in minutes. Add your business details, preferred
+            products, and sourcing requirements.</div>
+        </div>
+
+        <div class="step-card reveal reveal-delay-2">
+          <div class="step-number">2</div>
+          <div class="step-icon">🔍</div>
+          <div class="step-title">Discover & Compare</div>
+          <div class="step-desc">Browse verified listings filtered by product type, trust score, location, and
+            availability. Use AI to surface the best options instantly.</div>
+        </div>
+
+        <div class="step-card reveal reveal-delay-3">
+          <div class="step-number">3</div>
+          <div class="step-icon">🤝</div>
+          <div class="step-title">Chat & Confirm</div>
+          <div class="step-desc">Message suppliers directly, negotiate pricing, and finalize your order — all inside the
+            platform. Repeat with trusted partners.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ TESTIMONIALS ════════════════════════════════════════ -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-header centered reveal">
+        <div class="section-eyebrow">Testimonials</div>
+        <h2 class="section-title">Trusted by <em>Neem Businesses</em> Across India</h2>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card featured reveal">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <div class="testimonial-quote">"Neem Sourcing completely transformed how we procure raw materials. The trust
+            scores and AI chat saved us weeks of vetting suppliers manually."</div>
+          <div class="testimonial-author">
+            <div class="author-avatar av-green">RA</div>
+            <div>
+              <div class="author-name">Rajan Acharya</div>
+              <div class="author-role">Procurement Head, AgriChem Exports</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <div class="testimonial-quote">"As a supplier, listing on Neem Sourcing gave us access to buyers we never
+            reached before. Our monthly volume grew 40% in 3 months."</div>
+          <div class="testimonial-author">
+            <div class="author-avatar av-amber">SM</div>
+            <div>
+              <div class="author-name">Sunita Mehta</div>
+              <div class="author-role">Owner, Sri Neem Organics, Gujarat</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-3">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <div class="testimonial-quote">"The seasonal insights from the AI assistant helped us time our bulk neem oil
+            purchase perfectly. We saved over ₹3.2 lakh on a single order."</div>
+          <div class="testimonial-author">
+            <div class="author-avatar av-teal">PK</div>
+            <div>
+              <div class="author-name">Pradeep Krishnan</div>
+              <div class="author-role">Supply Chain Manager, BioGrow Labs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ MARKET INSIGHTS ════════════════════════════════════ -->
+  <section class="section">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center;" class="reveal">
+        <div>
+          <div class="section-eyebrow">Market Intelligence</div>
+          <h2 class="section-title">Stay Ahead with <em>Neem Market Insights</em></h2>
+          <p style="color:var(--text-muted);line-height:1.7;margin-bottom:1.5rem;font-size:1rem;">
+            Our platform aggregates real-time pricing, seasonal forecasts, and supply data so you always source at the
+            right time and price.
+          </p>
+          <a href="login.html" class="btn btn-primary" id="insightsLogin">Access Full Insights →</a>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;" class="reveal reveal-delay-2">
+          <div class="card card-body" style="text-align:center;">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">📈</div>
+            <div style="font-size:1.375rem;font-weight:700;color:var(--green-800);font-family:var(--font-serif);">
+              ₹280–320</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">Neem Oil / kg (bulk)</div>
+          </div>
+          <div class="card card-body" style="text-align:center;">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">🌾</div>
+            <div style="font-size:1.375rem;font-weight:700;color:var(--green-800);font-family:var(--font-serif);">₹22–28
+            </div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">Neem Kernels / kg</div>
+          </div>
+          <div class="card card-body" style="text-align:center;">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">🟫</div>
+            <div style="font-size:1.375rem;font-weight:700;color:var(--green-800);font-family:var(--font-serif);">₹8–12
+            </div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);">Neem Cake / kg</div>
+          </div>
+          <div class="card card-body"
+            style="text-align:center;background:var(--gold-100);border-color:rgba(184,136,26,0.2);">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">⚡</div>
+            <div style="font-size:1.375rem;font-weight:700;color:var(--gold-500);font-family:var(--font-serif);"
+              id="liveInsightNum">NOW</div>
+            <div style="font-size:0.8125rem;color:var(--gold-500);" id="liveInsightLabel">Best time to buy kernels</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ CTA ════════════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="cta-inner reveal">
+      <div class="hero-badge"
+        style="background:rgba(255,255,255,0.12);color:var(--gold-300);border-color:rgba(255,255,255,0.2);margin-bottom:1.5rem;display:inline-flex;">
+        <span class="hero-badge-dot" style="background:var(--gold-300);"></span>
+        Join 500+ Businesses Already Sourcing Smarter
+      </div>
+      <h2 class="cta-title">Ready to Transform Your<br><em>Neem Procurement?</em></h2>
+      <p class="cta-subtitle">Sign up free in 2 minutes. No credit card required. Connect with verified suppliers today.
+      </p>
+      <div class="cta-actions">
+        <a href="register.html?role=shop" class="btn btn-white btn-lg" id="ctaBuyer">Start as a Buyer</a>
+        <a href="register.html?role=supplier" class="btn btn-outline-white btn-lg" id="ctaSupplier">List as a
+          Supplier</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ FOOTER ═════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand -->
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="nav-logo-icon" style="background:rgba(255,255,255,0.12);">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-8 8Z"
+                  fill="white" />
+              </svg>
+            </div>
+            Neem Sourcing
+          </div>
+          <p class="footer-tagline">India's trusted B2B consultancy platform for transparent and efficient neem raw
+            material procurement.</p>
+          <div class="footer-social">
+            <a class="social-btn" href="#" title="LinkedIn">in</a>
+            <a class="social-btn" href="#" title="Twitter">𝕏</a>
+            <a class="social-btn" href="#" title="WhatsApp">📱</a>
+          </div>
+        </div>
+
+        <!-- Platform links -->
+        <div>
+          <div class="footer-col-title">Platform</div>
+          <div class="footer-links">
+            <a href="products.html">Browse Products</a>
+            <a href="map.html">Supplier Map</a>
+            <a href="login.html">Log In</a>
+            <a href="register.html">Sign Up</a>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div>
+          <div class="footer-col-title">Products</div>
+          <div class="footer-links">
+            <a href="products.html?type=oil">Neem Oil</a>
+            <a href="products.html?type=kernels">Neem Kernels</a>
+            <a href="products.html?type=cake">Neem Cake</a>
+            <a href="products.html?type=leaves">Neem Leaves</a>
+          </div>
+        </div>
+
+        <!-- Support -->
+        <div>
+          <div class="footer-col-title">Support</div>
+          <div class="footer-links">
+            <a href="chat.html">AI Assistant</a>
+            <a href="dashboard-supplier.html">Supplier Dashboard</a>
+            <a href="dashboard-shop.html">Buyer Dashboard</a>
+            <a href="login.html">Contact Us</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2025 Neem Sourcing. All rights reserved.</span>
+        <span>Made with 🌿 for the neem sourcing industry</span>
+        <span><a href="#">Privacy</a> · <a href="#">Terms</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ── Navbar scroll effect ─────────────────────────
+    const nav = document.getElementById('siteNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    // ── Animated counter ─────────────────────────────
+    function animateCounter(el, target, suffix) {
+      let start = 0;
+      const duration = 1800;
+      const startTime = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(tick);
+        else el.textContent = target;
+      }
+      requestAnimationFrame(tick);
+    }
+    const statsObs = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        animateCounter(document.getElementById('cntSuppliers'), 50);
+        animateCounter(document.getElementById('cntSkus'), 120);
+        animateCounter(document.getElementById('cntTons'), 480);
+        animateCounter(document.getElementById('cntCountries'), 12);
+        statsObs.disconnect();
+      }
+    }, { threshold: 0.5 });
+    statsObs.observe(document.querySelector('.stats-band'));
+
+    // ── Scroll reveal ────────────────────────────────
+    const reveals = document.querySelectorAll('.reveal');
+    const revealObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    reveals.forEach(r => revealObs.observe(r));
+
+    // ── Rotating AI insights ─────────────────────────
+    const insights = [
+      'Neem oil prices peak May–June; secure forward contracts now for the best rates.',
+      'Rajasthan suppliers offer the highest azadirachtin content in cold-press oil.',
+      'Neem kernel harvest (Aug–Oct) is the best time to stock up on raw materials.',
+      'Regular buyers with Trust Score 80+ get priority access to limited stock.',
+      'Bulk orders above 5 MT typically get 8–15% better pricing from suppliers.'
+    ];
+    let insightIdx = 0;
+    const insightEl = document.getElementById('insightText');
+    setInterval(() => {
+      insightEl.style.opacity = 0;
+      setTimeout(() => {
+        insightIdx = (insightIdx + 1) % insights.length;
+        insightEl.textContent = insights[insightIdx];
+        insightEl.style.opacity = 1;
+      }, 400);
+    }, 5000);
+
+    // ── Live insight label rotation ──────────────────
+    const liveLabels = [
+      'Best time to buy kernels',
+      'Neem oil in peak demand',
+      'Cake stock: limited',
+      'New suppliers this week'
+    ];
+    let liveIdx = 0;
+    setInterval(() => {
+      liveIdx = (liveIdx + 1) % liveLabels.length;
+      document.getElementById('liveInsightLabel').textContent = liveLabels[liveIdx];
+    }, 3500);
+  </script>
+
+  <!-- ═══════════════════ TOAST NOTIFICATION CONTAINER ═════════════════════ -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Features 3 (Activity Feed), 4 (New Arrival Badge), 5 (Visitor Counter) removed -->
+
+  <!-- ═══════════════════ BACK TO TOP ──────────────────────────────────── -->
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">
+    ↑
+  </button>
+
+  <!-- ═══════════════════ FLOATING CHAT WIDGET ──────────────────────────── -->
+  <button class="chat-widget-btn" id="chatWidgetBtn" onclick="toggleChatPanel()" title="AI Sourcing Assistant">
+    🌿
+    <span class="chat-notif" id="chatNotif">1</span>
+  </button>
+
+  <div class="chat-widget-panel" id="chatWidgetPanel">
+    <div class="cwp-header">
+      <div class="cwp-avatar">🤖</div>
+      <div>
+        <div class="cwp-name">Neem AI Assistant</div>
+        <div class="cwp-status"><span class="cwp-online-dot"></span>Online · Replies instantly</div>
+      </div>
+    </div>
+    <div class="cwp-body" id="cwpBody">
+      <div class="cwp-bubble bot">👋 Hi! I'm your Neem sourcing assistant. Ask me about pricing, availability, or how to
+        find verified suppliers!</div>
+    </div>
+    <div class="cwp-footer">
+      <input class="cwp-input" id="cwpInput" type="text" placeholder="Ask about neem sourcing…"
+        onkeydown="if(event.key==='Enter')sendChatMsg()">
+      <button class="cwp-send" onclick="sendChatMsg()">➤</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════ WELCOME MODAL ────────────────────────────────── -->
+  <div class="modal-overlay" id="welcomeModal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeModal()" id="modalCloseBtn">✕</button>
+      <span class="modal-leaf">🌿</span>
+      <h2 class="modal-title">Welcome to Neem Sourcing</h2>
+      <p class="modal-subtitle">India's most trusted B2B platform for neem raw materials. Are you a buyer or a supplier?
+      </p>
+      <div class="modal-actions">
+        <a href="register.html?role=shop" class="btn btn-primary btn-block" id="modalBuyerBtn">🛒 I want to Source
+          Neem</a>
+        <a href="register.html?role=supplier" class="btn btn-outline btn-block" id="modalSupplierBtn">📦 I want to List
+          My Supply</a>
+        <button onclick="closeModal()"
+          style="background:none;border:none;color:var(--text-light);font-size:0.8125rem;cursor:pointer;margin-top:0.25rem;font-family:var(--font-sans);">Just
+          browsing →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ══════════════════════════════════════════════════════════
+       UNIQUE INTERACTIVE FEATURES
+    ══════════════════════════════════════════════════════════ */
+
+    // ── 1. WELCOME MODAL (show once per session) ──────────────
+    function closeModal() {
+      const m = document.getElementById('welcomeModal');
+      m.classList.remove('open');
+      sessionStorage.setItem('ns_welcomed', '1');
+    }
+    if (!sessionStorage.getItem('ns_welcomed')) {
+      setTimeout(() => document.getElementById('welcomeModal').classList.add('open'), 1800);
+    }
+
+    // ── 2. TOAST NOTIFICATION SYSTEM ─────────────────────────
+    function showToast({ icon, iconClass, title, msg, duration = 5000 }) {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.style.position = 'relative';
+      t.innerHTML = `
+        <div class="toast-icon ${iconClass}">${icon}</div>
+        <div class="toast-body">
+          <div class="toast-title">${title}</div>
+          <div class="toast-msg">${msg}</div>
+        </div>
+        <button class="toast-close" onclick="dismissToast(this.closest('.toast'))">✕</button>
+        <div class="toast-progress" style="animation-duration:${duration}ms"></div>
+      `;
+      c.appendChild(t);
+      requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+      setTimeout(() => dismissToast(t), duration);
+    }
+    function dismissToast(t) {
+      if (!t) return;
+      t.classList.remove('show');
+      t.classList.add('hide');
+      setTimeout(() => t.remove(), 500);
+    }
+
+    // Simulated new product toasts queue
+    const productToasts = [
+      { icon: '🌿', iconClass: 'green', title: 'New Listing Added!', msg: 'Cold Pressed Neem Oil · 18 MT · Rajasthan', duration: 5500 },
+      { icon: '🌱', iconClass: 'green', title: 'Fresh Stock Available', msg: 'A-Grade Neem Kernels · Gujarat · 8 MT just listed', duration: 5500 },
+      { icon: '⭐', iconClass: 'gold', title: 'Supplier Verified!', msg: 'NatBio Supplies received Trust Score 94/100', duration: 5000 },
+      { icon: '🟫', iconClass: 'gold', title: 'Bulk Deal Alert', msg: 'Neem Cake · 25 MT · 12% off for forward orders', duration: 5500 },
+      { icon: '🤖', iconClass: 'blue', title: 'AI Seasonal Tip', msg: 'Secure neem oil contracts before May — prices rise 18% in summer', duration: 6000 },
+      { icon: '🍃', iconClass: 'green', title: 'New Supplier Joined', msg: 'VedFarm Naturals listed Dried Neem Leaves · Andhra', duration: 5000 },
+      { icon: '📦', iconClass: 'blue', title: 'Limited Stock Alert', msg: 'Neem kernel supply tight this week — 3 MT remaining', duration: 5500 },
+    ];
+    let toastIdx = 0;
+    function fireNextToast() {
+      showToast(productToasts[toastIdx % productToasts.length]);
+      toastIdx++;
+    }
+    // First toast after 3s, then every 12s
+    setTimeout(fireNextToast, 3000);
+    setInterval(fireNextToast, 12000);
+
+    // Features 3, 4, 5 removed (activity feed, new arrival badge, visitor counter)
+
+    // ── 6. BACK TO TOP BUTTON ──────────────────────────────────
+    const btt = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      btt.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+
+    // ── 7. FLOATING CHAT WIDGET — RAG POWERED ─────────────────
+    let chatOpen = false;
+    let chatHistory = []; // multi-turn conversation memory
+
+    function toggleChatPanel() {
+      chatOpen = !chatOpen;
+      document.getElementById('chatWidgetPanel').classList.toggle('open', chatOpen);
+      document.getElementById('chatNotif').style.display = chatOpen ? 'none' : '';
+      if (chatOpen) document.getElementById('cwpInput').focus();
+    }
+
+    // Render simple markdown (*bold* and **bold**) to HTML
+    function mdToHtml(text) {
+      return (text || '')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function addBubble(body, text, type) {
+      const b = document.createElement('div');
+      b.className = 'cwp-bubble ' + type;
+      if (type === 'bot') b.innerHTML = mdToHtml(text);
+      else b.textContent = text;
+      body.appendChild(b);
+      body.scrollTop = body.scrollHeight;
+      return b;
+    }
+
+    function showTypingIndicator(body) {
+      const t = document.createElement('div');
+      t.className = 'cwp-bubble bot cwp-typing';
+      t.id = 'cwpTyping';
+      t.innerHTML = '<span></span><span></span><span></span>';
+      t.style.cssText = 'display:flex;gap:4px;align-items:center;padding:0.6rem 0.875rem;';
+      // Inline style for dots since no external CSS yet
+      ['span', 'span', 'span'].forEach((_, i) => {
+        const s = t.querySelectorAll('span')[i];
+        s.style.cssText = `width:7px;height:7px;border-radius:50%;background:var(--green-500);
+          animation:cwpDot 1.2s ${i * 0.2}s ease-in-out infinite`;
+      });
+      body.appendChild(t);
+      body.scrollTop = body.scrollHeight;
+      return t;
+    }
+
+    // Inject typing dot animation once
+    if (!document.getElementById('cwpDotStyle')) {
+      const s = document.createElement('style');
+      s.id = 'cwpDotStyle';
+      s.textContent = `@keyframes cwpDot{0%,80%,100%{transform:scale(0.5);opacity:0.4}40%{transform:scale(1);opacity:1}}
+        .cwp-source{font-size:0.68rem;color:var(--text-light);margin-top:0.25rem;display:block;font-style:italic;}
+        .cwp-source.rag{color:var(--green-500);}`;
+      document.head.appendChild(s);
+    }
+
+    async function sendChatMsg() {
+      const inp = document.getElementById('cwpInput');
+      const body = document.getElementById('cwpBody');
+      const msg = inp.value.trim();
+      if (!msg) return;
+
+      inp.value = '';
+      inp.disabled = true;
+
+      // Add user bubble
+      addBubble(body, msg, 'user');
+
+      // Show typing indicator
+      const typing = showTypingIndicator(body);
+
+      try {
+        const resp = await fetch('/api/assistant/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: msg,
+            role: 'shop',
+            conversationHistory: chatHistory.slice(-4)
+          })
+        });
+
+        typing.remove();
+
+        if (!resp.ok) throw new Error('API error ' + resp.status);
+        const data = await resp.json();
+        const reply = data.reply || '🌿 Sorry, I couldn\'t get a response. Try again!';
+        const source = data.source || 'fallback';
+
+        // Add bot bubble with source badge
+        const bb = document.createElement('div');
+        bb.style.display = 'flex';
+        bb.style.flexDirection = 'column';
+        bb.style.alignSelf = 'flex-start';
+        bb.style.maxWidth = '88%';
+        const bubble = document.createElement('div');
+        bubble.className = 'cwp-bubble bot';
+        bubble.style.maxWidth = '100%';
+        bubble.style.alignSelf = 'flex-start';
+        bubble.innerHTML = mdToHtml(reply);
+        bb.appendChild(bubble);
+
+        // Source indicator
+        const srcBadge = document.createElement('span');
+        srcBadge.className = 'cwp-source' + (source === 'rag-groq' ? ' rag' : '');
+        srcBadge.textContent = source === 'rag-groq'
+          ? '✦ Answered by RAG · Llama 3.1'
+          : source === 'rag-rules'
+            ? '✦ Answered by RAG Knowledge Base'
+            : '✦ Neem Knowledge Base';
+        bb.appendChild(srcBadge);
+        body.appendChild(bb);
+        body.scrollTop = body.scrollHeight;
+
+        // Save to conversation history
+        chatHistory.push({ user: msg, reply });
+
+      } catch (err) {
+        typing.remove();
+        console.error('RAG chat error:', err);
+        addBubble(body, '⚠️ Couldn\'t reach Neem Assistant right now. Please try again!', 'bot');
+      } finally {
+        inp.disabled = false;
+        inp.focus();
+      }
+    }
+  </script>
+</body>
+
+</html>

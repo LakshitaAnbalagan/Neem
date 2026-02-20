@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Neem Sourcing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="dashboard-shop.html">Neem Sourcing</a>
+    <div class="nav-links">
+      <a href="products.html">Products</a>
+      <a href="map.html">Map</a>
+      <a href="chat.html">Chat</a>
+      <span class="text-muted text-small" id="userName"></span>
+      <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+    </div>
+  </nav>
+
+  <div class="container-wide page">
+    <div class="welcome-card card card-body mb-4" style="background: #e8f5e9; border-left: 4px solid var(--primary); max-width: 48rem; margin: 2rem auto 2rem auto;">
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div>
+          <h1 class="mb-1" style="font-size:1.7rem;">Welcome, <span id="welcomeUserName" class="text-primary"></span>!</h1>
+          <p class="mb-0 text-muted">Your professional neem sourcing workspace is ready. Use the quick actions below to get started, or review the latest AI insights for smarter procurement.</p>
+        </div>
+        <div class="text-center">
+          <div class="dashboard-stats d-flex flex-row gap-3 justify-content-center mt-3 mt-md-0">
+            <div class="stat-box p-2 px-3 bg-white rounded shadow-sm">
+              <div class="text-small text-muted">Trust Score</div>
+              <div class="fw-bold" id="userTrustScore">–</div>
+            </div>
+            <div class="stat-box p-2 px-3 bg-white rounded shadow-sm">
+              <div class="text-small text-muted">Chats</div>
+              <div class="fw-bold" id="userChatCount">–</div>
+            </div>
+            <div class="stat-box p-2 px-3 bg-white rounded shadow-sm">
+              <div class="text-small text-muted">Suppliers</div>
+              <div class="fw-bold" id="userSupplierCount">–</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h1 class="page-title">Shop dashboard</h1>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">Find neem</h3>
+          <p class="text-muted">Search products and availability from suppliers.</p>
+          <a href="products.html" class="btn btn-primary">Browse products</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">Seasonal tip</h3>
+          <p class="text-muted" id="seasonalTip">Loading…</p>
+          <span class="season-badge" id="seasonLabel">Season</span>
+          <p class="text-small text-primary mt-2 mb-0" id="aiSeasonalTip"></p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">Messages</h3>
+          <p class="text-muted">Chat with suppliers directly.</p>
+          <a href="chat.html" class="btn btn-outline">Open chat</a>
+        </div>
+      </div>
+    </div>
+    <div class="row g-4 mt-4">
+      <div class="col-md-6">
+        <div class="card card-body h-100">
+          <h2 class="mb-3">Quick actions</h2>
+          <div class="d-flex flex-wrap gap-2">
+            <a href="products.html" class="btn btn-primary">Search availability</a>
+            <a href="map.html" class="btn btn-outline">View supplier map</a>
+            <a href="chat.html" class="btn btn-outline">Start a conversation</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card card-body h-100">
+          <h2 class="mb-3">AI insights for this month</h2>
+          <p class="text-muted text-small mb-2" id="aiInsightMain">Loading…</p>
+          <ul class="text-small text-muted mb-0" id="aiInsightList">
+            <li>Loading recommendations…</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    if (!requireAuth('shop')) throw new Error('auth');
+    const user = getUser();
+    document.getElementById('userName').textContent = user?.name || user?.email || '';
+    document.getElementById('welcomeUserName').textContent = user?.name?.split(' ')[0] || user?.name || user?.email || '';
+    // Fetch trust score, chat count, supplier count for dashboard stats
+    api('/api/users/suppliers').then(function (suppliers) {
+      document.getElementById('userSupplierCount').textContent = suppliers.length;
+    }).catch(function () { document.getElementById('userSupplierCount').textContent = '–'; });
+    api('/api/chat/conversations').then(function (chats) {
+      document.getElementById('userChatCount').textContent = chats.length;
+    }).catch(function () { document.getElementById('userChatCount').textContent = '–'; });
+    api('/api/users/suppliers').then(function (suppliers) {
+      // Find trust score for this user if they are a supplier (for shop, show average)
+      let avg = 0;
+      if (suppliers.length) {
+        avg = Math.round(suppliers.reduce((a, s) => a + (s.trustScore || 0), 0) / suppliers.length);
+      }
+      document.getElementById('userTrustScore').textContent = avg ? avg + ' / 100' : '–';
+    }).catch(function () { document.getElementById('userTrustScore').textContent = '–'; });
+    const monthIndex = currentSeasonMonth();
+    document.getElementById('seasonLabel').textContent = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][monthIndex - 1];
+    document.getElementById('seasonalTip').textContent = getSeasonalTip(monthIndex);
+    api('/api/tips/seasonal?role=shop').then(function (data) {
+      if (data.tip) document.getElementById('aiSeasonalTip').textContent = 'AI: ' + data.tip;
+    }).catch(function () {});
+
+    // Simple rule-based \"AI\" insight generator for the buyer dashboard
+    (function () {
+      const main = document.getElementById('aiInsightMain');
+      const list = document.getElementById('aiInsightList');
+      if (!main || !list) return;
+
+      let headline = '';
+      let bullets = [];
+
+      if ([3, 4].includes(monthIndex)) {
+        headline = 'Strong season for neem leaves and early kernel planning.';
+        bullets = [
+          'Prioritize suppliers listing fresh neem leaves and leaf-based products.',
+          'Start shortlisting kernel and oil suppliers before peak summer demand.',
+          'Use higher trust score suppliers (> 70) for long-term contracts.'
+        ];
+      } else if ([5, 6].includes(monthIndex)) {
+        headline = 'Peak window for neem kernels and oil contracts.';
+        bullets = [
+          'Focus searches on neem kernels, oil, and bulk processing lots.',
+          'Lock pricing early with reliable suppliers to avoid in-season spikes.',
+          'Use the map to combine nearby suppliers and save on logistics.'
+        ];
+      } else if ([7, 8, 9].includes(monthIndex)) {
+        headline = 'Heavy neem seed and kernel availability across regions.';
+        bullets = [
+          'Expand sourcing radius using the map for better bulk rates.',
+          'Use chat to negotiate multi-supplier shipments in one window.',
+          'Capture supplier responsiveness now to refine trust scoring later.'
+        ];
+      } else if ([10, 11].includes(monthIndex)) {
+        headline = 'Good time to build buffer stocks for the year end.';
+        bullets = [
+          'Look for suppliers with consistent availability across months.',
+          'Use Neem Assistant to validate sourcing strategy and quantities.',
+          'Re-balance between oil, cake, and powder based on demand.'
+        ];
+      } else {
+        headline = 'Plan ahead for upcoming neem availability cycles.';
+        bullets = [
+          'Review which neem forms you used most in the last season.',
+          'Shortlist 3–5 high-trust suppliers and keep conversations warm.',
+          'Use seasonal tips and the map together to plan procurement.'
+        ];
+      }
+
+      main.textContent = headline;
+      list.innerHTML = bullets.map(b => `<li>${b}</li>`).join('');
+    })();
+    document.getElementById('logoutBtn').onclick = () => { clearAuth(); location.href = 'index.html'; };
+  </script>
+</body>
+</html>

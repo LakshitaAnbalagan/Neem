@@ -1,0 +1,108 @@
+﻿
+[1mΓòöΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòù[0m
+[1mΓòæ   NEEM SOURCING ┬╖ RAG CHATBOT TEST SUITE        Γòæ[0m
+[1mΓòÜΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓò¥[0m
+[90m  Endpoint: http://localhost:3000/api/assistant/chat
+[0m
+[1mΓöüΓöüΓöü  SECTION 1: Query Tests  ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü[0m
+
+  [[32m PASS [0m] [37m01 ┬╖ Neem Oil Pricing[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(78ms)[0m
+[90m         Q: What is the price of neem oil per kg for bulk orders?[0m
+         A: ≡ƒÆ░ **Current neem bulk rates (approx):** ΓÇó Cold-pressed neem oil: Γé╣280ΓÇô340/kg (500 kg+) ΓÇó Neem kernels A-Grade: Γé╣24ΓÇô32/kg ΓÇó Neem seed cake: Γé╣10ΓÇô16/kg ΓÇó Dried neΓÇª
+[32m         Γ£ô Keywords matched: [Γé╣, /kg, oil, bulk][0m
+
+  [[32m PASS [0m] [37m02 ┬╖ Neem Kernel Season[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(16ms)[0m
+[90m         Q: When is the best time to buy neem kernels and why?[0m
+         A: ≡ƒî▒ Neem kernels are graded A (Γëñ8% moisture, ΓëÑ40% oil, ΓëÑ1000 ppm azadirachtin) and B (8ΓÇô12% moisture). A-Grade: Γé╣24ΓÇô32/kg; B-Grade: Γé╣18ΓÇô24/kg. Best time to buy: ΓÇª
+[32m         Γ£ô Keywords matched: [August, harvest, kernel][0m
+[33m         Γ£ù Keywords missing: [October][0m
+
+  [[32m PASS [0m] [37m03 ┬╖ Azadirachtin / PPM[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(9ms)[0m
+[90m         Q: What is azadirachtin and why does the ppm level matter?[0m
+         A: ≡ƒ½Æ Neem oil comes in cold-pressed (Γé╣280ΓÇô340/kg, high azadirachtin 300ΓÇô3000 ppm) and solvent-extracted (Γé╣180ΓÇô240/kg, lower ppm) varieties. Cold-press is preferreΓÇª
+[32m         Γ£ô Keywords matched: [ppm, biopesticide, azadirachtin][0m
+
+  [[31m FAIL [0m] [37m04 ┬╖ Neem Oil Storage[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(12ms)[0m
+[90m         Q: How long can I store neem oil and in what container?[0m
+         A: ≡ƒ½Æ Neem oil comes in cold-pressed (Γé╣280ΓÇô340/kg, high azadirachtin 300ΓÇô3000 ppm) and solvent-extracted (Γé╣180ΓÇô240/kg, lower ppm) varieties. Cold-press is preferreΓÇª
+[33m         Γ£ù Keywords missing: [months, store, HDPE, shelf][0m
+
+  [[31m FAIL [0m] [37m05 ┬╖ Oil Yield Calculation[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(13ms)[0m
+[90m         Q: How many litres of neem oil can I get from 1 kg of kernels?[0m
+         A: ≡ƒ½Æ Neem oil comes in cold-pressed (Γé╣280ΓÇô340/kg, high azadirachtin 300ΓÇô3000 ppm) and solvent-extracted (Γé╣180ΓÇô240/kg, lower ppm) varieties. Cold-press is preferreΓÇª
+[32m         Γ£ô Keywords matched: [kg][0m
+[33m         Γ£ù Keywords missing: [litre, cold press, yield][0m
+
+  [[32m PASS [0m] [37m06 ┬╖ Export Certifications[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(12ms)[0m
+[90m         Q: What certifications do I need to export neem products?[0m
+         A: ≡ƒô£ For export, you'll need: USDA Organic or EU Organic certificate (via ECOCERT, IMO, Control Union), Phytosanitary Certificate from the state agriculture dept,ΓÇª
+[32m         Γ£ô Keywords matched: [USDA, ECOCERT, Phytosanitary][0m
+[33m         Γ£ù Keywords missing: [certification][0m
+
+  [[31m FAIL [0m] [37m07 ┬╖ GST Rates[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(13ms)[0m
+[90m         Q: What is the GST rate on neem cake and neem oil in India?[0m
+         A: ≡ƒÆ░ **Current neem bulk rates (approx):** ΓÇó Cold-pressed neem oil: Γé╣280ΓÇô340/kg (500 kg+) ΓÇó Neem kernels A-Grade: Γé╣24ΓÇô32/kg ΓÇó Neem seed cake: Γé╣10ΓÇô16/kg ΓÇó Dried neΓÇª
+[33m         Γ£ù Keywords missing: [GST, NIL, 5%, exempt][0m
+
+  [[32m PASS [0m] [37m08 ┬╖ Supplier Trust Score[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(9ms)[0m
+[90m         Q: How do I choose a reliable supplier using trust scores?[0m
+         A: ≡ƒöÆ Trust Scores (0ΓÇô100) reflect supplier delivery reliability (40%), product quality (35%), and communication (25%). Aim for 80+ for standard orders, 85+ beforeΓÇª
+[32m         Γ£ô Keywords matched: [trust, score, supplier][0m
+[33m         Γ£ù Keywords missing: [verify][0m
+
+  [[31m FAIL [0m] [37m09 ┬╖ Minimum Order Quantity[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(14ms)[0m
+[90m         Q: What is the minimum order quantity for neem oil and cake?[0m
+         A: ≡ƒ½Æ Neem oil comes in cold-pressed (Γé╣280ΓÇô340/kg, high azadirachtin 300ΓÇô3000 ppm) and solvent-extracted (Γé╣180ΓÇô240/kg, lower ppm) varieties. Cold-press is preferreΓÇª
+[32m         Γ£ô Keywords matched: [kg][0m
+[33m         Γ£ù Keywords missing: [MT, minimum, order][0m
+
+  [[32m PASS [0m] [37m10 ┬╖ Off-topic Guard[0m
+         [32mΓ£ª RAG Knowledge Base     [0m  [90m(8ms)[0m
+[90m         Q: Can you give me a recipe for biryani?[0m
+         A: ≡ƒñö I'm not sure about that specific question. Try asking about **neem pricing**, **seasonal availability**, **quality specifications**, or **how to use the platΓÇª
+[32m         Γ£ô Off-topic guard: correctly redirected[0m
+
+[1mΓöüΓöüΓöü  SECTION 2: Multi-Turn Conversation  ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü[0m
+[90m  Simulates a buyer having a back-and-forth conversation
+[0m
+[37m  [Turn 1] YOU:  I want to source neem oil in large quantity[0m
+           BOT:  ≡ƒ½Æ Neem oil comes in cold-pressed (Γé╣280ΓÇô340/kg, high azadirachtin 300ΓÇô3000 ppm) and solvent-extracted (Γé╣180ΓÇô240/kg, lower ppm) varieties. Cold-press is preferreΓÇª
+[90m           src: rag-rules  time: 12ms
+[0m
+[37m  [Turn 2] YOU:  What price can I expect for 10 MT?[0m
+           BOT:  ≡ƒÆ░ **Current neem bulk rates (approx):** ΓÇó Cold-pressed neem oil: Γé╣280ΓÇô340/kg (500 kg+) ΓÇó Neem kernels A-Grade: Γé╣24ΓÇô32/kg ΓÇó Neem seed cake: Γé╣10ΓÇô16/kg ΓÇó Dried neΓÇª
+[90m           src: rag-rules  time: 8ms
+[0m
+[37m  [Turn 3] YOU:  Which state in India should I source from for quality?[0m
+           BOT:  ≡ƒæï Hello! I'm Neem Assistant ΓÇö your expert guide for neem raw material sourcing. Ask me about pricing, seasons, suppliers, certifications, or how to use this plΓÇª
+[90m           src: rag-rules  time: 8ms
+[0m
+[37m  [Turn 4] YOU:  How do I verify the supplier before placing the order?[0m
+           BOT:  ≡ƒöÆ Trust Scores (0ΓÇô100) reflect supplier delivery reliability (40%), product quality (35%), and communication (25%). Aim for 80+ for standard orders, 85+ beforeΓÇª
+[90m           src: rag-rules  time: 7ms
+[0m
+[1mΓöüΓöüΓöü  SECTION 3: Latency Benchmark  ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü[0m
+      9ms  [32m                    [0m  "price of neem oil"
+     17ms  [32m                    [0m  "best season for neem kernels"
+      8ms  [32m                    [0m  "what is trust score"
+      9ms  [32m                    [0m  "gst on neem cake"
+     10ms  [32m                    [0m  "how to export neem"
+[90m
+  Avg latency: 11ms[0m
+
+[1mΓöüΓöüΓöü  SUMMARY  ΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöüΓöü[0m
+  Query Tests: [32m6 PASSED[0m  [31m4 FAILED[0m  ([33m60%[0m)
+  Multi-Turn:  [32m4 turns completed[0m
+  Source Mode: [32mΓ£ª RAG Knowledge Base (add GROQ_API_KEY to .env for LLM)[0m
+[1m
+  Done! Γ£ª RAG system is working.
+[0m
