@@ -7,6 +7,9 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "keywords": [
     "neem",
     "sourcing",
@@ -20,11 +23,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "groq-sdk": "^0.5.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "multer": "^2.0.2",
     "pdfkit": "^0.17.2",
-    "razorpay": "^2.9.6",
     "socket.io": "^4.6.1"
   }
 }
