@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product – Neem Sourcing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+  <style>
+    .prod-img-main {
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 1px solid #e0e8d9
+    }
+
+    .prod-img-thumbs {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem
+    }
+
+    .prod-img-thumb {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: border .2s
+    }
+
+    .prod-img-thumb.active,
+    .prod-img-thumb:hover {
+      border-color: #2d5a27
+    }
+
+    .tier-table {
+      width: 100%;
+      font-size: 0.85rem;
+      border-collapse: collapse;
+      margin-top: 0.5rem
+    }
+
+    .tier-table th {
+      background: #f7faf5;
+      color: #2d5a27;
+      padding: 6px 12px;
+      font-weight: 600;
+      border-bottom: 2px solid #e0e8d9
+    }
+
+    .tier-table td {
+      padding: 6px 12px;
+      border-bottom: 1px solid #f0f4ec
+    }
+
+    .tier-highlight {
+      background: #e8f5e1;
+      font-weight: 600
+    }
+
+    .order-box {
+      background: #f7faf5;
+      border: 1px solid #e0e8d9;
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-top: 1rem
+    }
+
+    .price-result {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #2d5a27
+    }
+
+    .review-card {
+      background: #f7faf5;
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 0.5rem
+    }
+
+    .stars-display {
+      color: #f0ad4e;
+      letter-spacing: 1px
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="dashboard-shop.html">Neem Sourcing</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="products.html" data-i18n="Products">Products</a>
+      <a href="orders.html" data-i18n="Orders">Orders</a>
+      <a href="map.html" data-i18n="Map">Map</a>
+      <a href="chat.html" data-i18n="Chat">Chat</a>
+      <a href="dashboard-shop.html" data-i18n="Dashboard">Dashboard</a>
+      <button type="button" class="btn btn-outline btn-sm" id="logoutBtn" data-i18n="Log out">Log out</button>
+    </div>
+  </nav>
+
+  <div class="container-narrow page">
+    <a href="products.html" class="text-muted text-small d-inline-block mb-2" data-i18n="← Back to products">← Back to
+      products</a>
+    <div id="content">Loading…</div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    if (!requireAuth('shop')) throw new Error('auth');
+    document.getElementById('logoutBtn').onclick = () => { clearAuth(); location.href = 'index.html'; };
+    document.getElementById('hamburger').onclick = () => document.getElementById('navLinks').classList.toggle('open');
+    const prodId = new URLSearchParams(location.search).get('id');
+    if (!prodId) { document.getElementById('content').innerHTML = 'Product not found.'; throw new Error('no id'); }
+
+    function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    let productData = null;
+
+    api('/api/products/' + prodId).then(async p => {
+      productData = p;
+      const trust = p.supplierTrustScore ?? 50;
+      const trustCl = trustClass(trust);
+      const avail = p.availability;
+      const hasMoisture = p.moistureContentPercent != null && p.moistureContentPercent !== '';
+      const hasPpm = p.ppmValue != null && p.ppmValue !== '';
+      const specRows = (p.specifications || []).map(s => `<tr><td>${esc(s.name)}</td><td>${esc(s.value)}${s.unit ? ' ' + esc(s.unit) : ''}</td></tr>`).join('');
+      const hasSpecs = hasMoisture || hasPpm || (p.specifications && p.specifications.length > 0);
+
+      // Images
+      const imgs = p.images && p.images.length ? p.images : [];
+      const mainImg = imgs.length
+        ? `<img id="mainImage" src="${imgs[0]}" class="prod-img-main" onerror="this.style.display='none'">`
+        : `<div class="prod-img-main" style="background:linear-gradient(135deg,#e8f5e1,#f0f7ec);display:flex;align-items:center;justify-content:center;font-size:5rem;">🌿</div>`;
+      const thumbs = imgs.length > 1
+        ? `<div class="prod-img-thumbs">${imgs.map((src, i) => `<img src="${src}" class="prod-img-thumb ${i === 0 ? 'active' : ''}" onclick="switchImage('${src}', this)" onerror="this.style.display='none'">`).join('')}</div>`
+        : '';
+
+      // Bulk pricing tiers
+      const tiers = (p.priceTiers || []).slice().sort((a, b) => a.minQty - b.minQty);
+      let tierHtml = '';
+      if (tiers.length) {
+        tierHtml = `<div class="mt-3">
+          <h5>📦 Bulk Order Pricing</h5>
+          <p class="text-muted text-small">Tiered pricing for larger quantities:</p>
+          <table class="tier-table"><thead><tr><th>Min Qty</th><th>Price per ${esc(p.unit || 'kg')}</th><th>Savings</th></tr></thead><tbody>
+          <tr><td>1 ${esc(p.unit)}</td><td>₹${Number(p.pricePerUnit).toLocaleString()}</td><td>—</td></tr>
+          ${tiers.map(t => {
+          const save = Math.round((1 - t.pricePerUnit / p.pricePerUnit) * 100);
+          return `<tr><td>${t.minQty}+ ${esc(p.unit)}</td><td>₹${Number(t.pricePerUnit).toLocaleString()}</td><td style="color:#28a745;font-weight:600">${save}% off</td></tr>`;
+        }).join('')}
+          </tbody></table>
+        </div>`;
+      }
+
+      // Supplier reviews
+      let reviewHtml = '';
+      try {
+        const rv = await api('/api/orders/reviews/supplier/' + p.supplierId._id);
+        if (rv.reviews?.length) {
+          const stars = '★'.repeat(Math.round(rv.avg)) + '☆'.repeat(5 - Math.round(rv.avg));
+          reviewHtml = `<hr><h3>⭐ Buyer Reviews</h3>
+            <p><span class="stars-display">${stars}</span> <strong>${rv.avg}</strong>/5 (${rv.count} reviews)</p>
+            ${rv.reviews.slice(0, 5).map(r => `<div class="review-card">
+              <span class="stars-display">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+              <strong class="text-small ms-1">${esc(r.buyerId?.businessName || r.buyerId?.name || 'Buyer')}</strong>
+              ${r.comment ? `<p class="mb-0 text-small mt-1">"${esc(r.comment)}"</p>` : ''}
+            </div>`).join('')}`;
+        }
+      } catch (_) { }
+
+      document.getElementById('content').innerHTML = `
+        <div class="card card-body" style="border-radius:14px;border:1px solid #e0e8d9;">
+          <div class="row g-4">
+            <div class="col-md-5">
+              ${mainImg}
+              ${thumbs}
+            </div>
+            <div class="col-md-7">
+              <div class="d-flex justify-between align-center flex-wrap gap-2 mb-2">
+                <h1 class="mb-0" style="font-size:1.6rem;">${esc(p.name)}</h1>
+                <span class="trust-badge ${trustCl}">Trust ★ ${trust}</span>
+              </div>
+              ${p.category ? `<p class="text-muted mb-1">${esc(p.category)}</p>` : ''}
+              ${p.description ? `<p>${esc(p.description)}</p>` : ''}
+              <hr>
+              <p style="font-size:1.3rem;"><strong>₹${Number(p.pricePerUnit || 0).toLocaleString()}</strong> <span class="text-muted" style="font-size:0.9rem">per ${esc(p.unit || 'kg')}</span></p>
+              <p><strong>Min order:</strong> ${p.minOrderQuantity || 1} ${p.unit || 'kg'}</p>
+              ${avail ? `<p><strong>Available:</strong> ${avail.quantityAvailable} ${avail.unit || 'kg'}</p>` : ''}
+
+              ${tierHtml}
+
+              ${hasSpecs ? `<hr><h5>🔬 Quality & Specifications</h5>
+                <table class="tier-table"><tbody>
+                ${hasMoisture ? `<tr><td>Moisture</td><td>≤ ${Number(p.moistureContentPercent)}%</td></tr>` : ''}
+                ${hasPpm ? `<tr><td>${esc(p.ppmLabel || 'PPM')}</td><td>${Number(p.ppmValue)} ppm</td></tr>` : ''}
+                ${specRows}</tbody></table>` : ''}
+
+              <hr>
+              <h5>👤 Supplier</h5>
+              <p class="mb-1"><strong>${esc(p.supplierId?.businessName || p.supplierId?.name || '')}</strong></p>
+              ${p.supplierId?.email ? `<p class="text-small text-muted mb-1">${esc(p.supplierId.email)}</p>` : ''}
+              ${p.supplierId?.phone ? `<p class="text-small mb-1">📞 ${esc(p.supplierId.phone)}</p>` : ''}
+              <a href="chat.html?with=${p.supplierId?._id}" class="btn btn-outline btn-sm">💬 Message supplier</a>
+
+              ${reviewHtml}
+            </div>
+          </div>
+
+          <!-- Place Order Box -->
+          <div class="order-box" id="orderBox">
+            <h4>🛒 Place Order</h4>
+            <div class="row g-3 align-items-end">
+              <div class="col-auto">
+                <label class="form-label text-small">Quantity (${esc(p.unit)})</label>
+                <input type="number" class="form-control" id="orderQty" min="${p.minOrderQuantity || 1}" value="${p.minOrderQuantity || 1}" step="1" style="max-width:120px" oninput="calcPrice()">
+              </div>
+              <div class="col-auto">
+                <label class="form-label text-small">Price</label>
+                <div class="price-result" id="calcPrice">₹${Number(p.pricePerUnit * (p.minOrderQuantity || 1)).toLocaleString()}</div>
+                <div class="text-muted text-small" id="calcUnit">₹${Number(p.pricePerUnit).toLocaleString()} / ${esc(p.unit)}</div>
+              </div>
+              <div class="col">
+                <label class="form-label text-small">Note to supplier (optional)</label>
+                <input type="text" class="form-control" id="orderNote" placeholder="e.g. Need delivery by March 15">
+              </div>
+            </div>
+            <div class="mt-2" id="counterOfferWrap" style="display:none">
+              <label class="form-label text-small">💬 Counter-offer price per ${esc(p.unit)} (₹)</label>
+              <input type="number" class="form-control form-control-sm" id="counterPrice" min="1" step="0.01" style="max-width:150px" placeholder="Your price">
+            </div>
+            <div class="d-flex gap-2 mt-3 flex-wrap">
+              <button class="btn btn-primary" id="placeOrderBtn" onclick="placeOrder()">Place Order</button>
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('counterOfferWrap').style.display='block';this.style.display='none'">💬 Negotiate price instead</button>
+            </div>
+            <div id="orderAlert" class="mt-2"></div>
+          </div>
+        </div>`;
+    }).catch(() => {
+      document.getElementById('content').innerHTML = '<div class="alert alert-danger">Product not found or unavailable.</div>';
+    });
+
+    function switchImage(src, thumb) {
+      document.getElementById('mainImage').src = src;
+      document.querySelectorAll('.prod-img-thumb').forEach(t => t.classList.remove('active'));
+      thumb.classList.add('active');
+    }
+
+    function calcPrice() {
+      if (!productData) return;
+      const qty = +document.getElementById('orderQty').value || 1;
+      const tiers = (productData.priceTiers || []).slice().sort((a, b) => b.minQty - a.minQty);
+      let unitPrice = productData.pricePerUnit;
+      for (const t of tiers) {
+        if (qty >= t.minQty) { unitPrice = t.pricePerUnit; break; }
+      }
+      document.getElementById('calcPrice').textContent = '₹' + Number(unitPrice * qty).toLocaleString();
+      document.getElementById('calcUnit').textContent = `₹${Number(unitPrice).toLocaleString()} / ${productData.unit || 'kg'}`;
+    }
+
+    async function placeOrder() {
+      const btn = document.getElementById('placeOrderBtn');
+      const alertEl = document.getElementById('orderAlert');
+      btn.disabled = true; btn.textContent = 'Placing…';
+      alertEl.innerHTML = '';
+
+      const qty = +document.getElementById('orderQty').value;
+      if (!qty || qty < (productData.minOrderQuantity || 1)) {
+        alertEl.innerHTML = `<div class="alert alert-danger">Minimum order: ${productData.minOrderQuantity || 1} ${productData.unit}</div>`;
+        btn.disabled = false; btn.textContent = 'Place Order'; return;
+      }
+
+      const body = {
+        productId: prodId,
+        quantity: qty,
+        buyerNote: document.getElementById('orderNote').value.trim()
+      };
+      const counter = +document.getElementById('counterPrice')?.value;
+      if (counter > 0) body.counterOfferPrice = counter;
+
+      try {
+        // Step 1: Create the order in DB
+        const order = await api('/api/orders', { method: 'POST', body: JSON.stringify(body) });
+        const totalAmount = (productData.pricePerUnit || 0) * qty;
+        const user = getUser();
+
+        // Step 2: Initiate Razorpay payment
+        btn.textContent = 'Opening Payment…';
+        initiatePayment({
+          amount: totalAmount,
+          orderId: order._id || order.id,
+          productName: productData.name,
+          buyerName: user?.name || '',
+          buyerEmail: user?.email || '',
+          onSuccess: (paymentId) => {
+            alertEl.innerHTML = `<div class="alert alert-success">✅ Order placed &amp; payment successful! <a href="orders.html">View your orders →</a></div>`;
+            btn.textContent = '✓ Paid';
+          },
+          onFailure: (err) => {
+            // Order exists but payment failed/cancelled — still navigate to orders
+            if (err.message.includes('cancelled')) {
+              alertEl.innerHTML = `<div class="alert alert-warning">⚠️ Order placed but payment was cancelled. You can pay from <a href="orders.html">Orders page</a>.</div>`;
+            } else {
+              alertEl.innerHTML = `<div class="alert alert-danger">Payment failed: ${err.message}. Order saved — retry payment from <a href="orders.html">Orders</a>.</div>`;
+            }
+            btn.disabled = false;
+            btn.textContent = 'Place Order';
+          }
+        });
+      } catch (e) {
+        alertEl.innerHTML = `<div class="alert alert-danger">${e.message}</div>`;
+        btn.disabled = false; btn.textContent = 'Place Order';
+      }
+    }
+  </script>
+  <script src="js/payment.js"></script>
+  <script src="js/i18n.js"></script>
+</body>
+
+</html>

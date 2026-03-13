@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supplier dashboard – Neem Sourcing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/theme.css" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar">
+    <a class="navbar-brand" href="dashboard-supplier.html">Neem Sourcing</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="products.html?my=1" data-i18n="My products">My products</a>
+      <a href="orders.html" data-i18n="Orders">Orders</a>
+      <a href="analytics.html" data-i18n="Analytics">Analytics</a>
+      <a href="chat.html" data-i18n="Chat">Chat</a>
+      <a href="quality-check.html" data-i18n="Quality Check">🔬 Quality Check</a>
+      <span class="text-muted text-small" id="userName"></span>
+      <button type="button" class="btn btn-outline btn-sm" id="logoutBtn" data-i18n="Log out">Log out</button>
+    </div>
+  </nav>
+
+  <div class="container-wide page">
+    <h1 class="page-title" data-i18n="Supplier dashboard">Supplier dashboard</h1>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title" data-i18n="Your listings">Your listings</h3>
+          <p class="text-muted" data-i18n="Manage product availability and prices.">Manage product availability and
+            prices.</p>
+          <a href="products.html?my=1" class="btn btn-primary" data-i18n="My products">My products</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title" data-i18n="Seasonal tip">Seasonal tip</h3>
+          <p class="text-muted mb-0" id="supplierSeasonalTip">Loading…</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title" data-i18n="Add product">Add product</h3>
+          <p class="text-muted" data-i18n="List new neem product for buyers to find.">List new neem product for buyers
+            to find.</p>
+          <button type="button" class="btn btn-outline" id="addProductBtn" data-i18n="Add product">Add product</button>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">📦 <span data-i18n="Orders">Orders</span></h3>
+          <p class="text-muted" data-i18n="View and manage incoming orders from buyers.">View and manage incoming orders
+            from buyers.</p>
+          <a href="orders.html" class="btn btn-primary" data-i18n="View orders">View orders</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title">📊 <span data-i18n="Analytics">Analytics</span></h3>
+          <p class="text-muted" data-i18n="Revenue, top buyers, product performance, and ratings.">Revenue, top buyers,
+            product performance, and ratings.</p>
+          <a href="analytics.html" class="btn btn-outline" data-i18n="View analytics">View analytics</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card card-body h-100">
+          <h3 class="card-title" data-i18n="Messages">Messages</h3>
+          <p class="text-muted" data-i18n="Reply to buyer inquiries to improve trust score.">Reply to buyer inquiries
+            quickly to improve your trust score.</p>
+          <a href="chat.html" class="btn btn-outline" data-i18n="Open chat">Open chat</a>
+        </div>
+      </div>
+    </div>
+    <div class="card card-body mt-4">
+      <h2 class="mb-1">📍 <span data-i18n="Your Business Location">Your Business Location</span></h2>
+      <p class="text-muted text-small mb-3" data-i18n="Help buyers find you on the supplier map.">Help buyers find you
+        on the supplier map. Choose how to set your location.
+      </p>
+      <div id="locationAlert" class="alert alert-danger hide"></div>
+
+      <!-- Option 1: GPS -->
+      <button type="button" id="gpsBtn" class="btn btn-primary mb-3"
+        style="display:inline-flex;align-items:center;gap:0.5rem;width:fit-content;">
+        <span style="font-size:1.1rem;">🛰️</span> <span data-i18n="Use My Current Location (GPS)">Use My Current
+          Location (GPS)</span>
+      </button>
+      <p class="text-muted text-small mb-3" style="margin-top:-0.75rem;" data-i18n="— or select your area manually —">—
+        or select your area manually —</p>
+
+      <!-- Option 2: State + City -->
+      <form id="locationForm">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label" data-i18n="State">State</label>
+            <select class="form-control" id="stateSelect">
+              <option value="">Select state…</option>
+              <option>Andhra Pradesh</option>
+              <option>Assam</option>
+              <option>Bihar</option>
+              <option>Chhattisgarh</option>
+              <option>Goa</option>
+              <option>Gujarat</option>
+              <option>Haryana</option>
+              <option>Himachal Pradesh</option>
+              <option>Jharkhand</option>
+              <option>Karnataka</option>
+              <option>Kerala</option>
+              <option>Madhya Pradesh</option>
+              <option>Maharashtra</option>
+              <option>Manipur</option>
+              <option>Meghalaya</option>
+              <option>Odisha</option>
+              <option>Punjab</option>
+              <option>Rajasthan</option>
+              <option>Tamil Nadu</option>
+              <option>Telangana</option>
+              <option>Uttar Pradesh</option>
+              <option>Uttarakhand</option>
+              <option>West Bengal</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" data-i18n="City / District">City / District</label>
+            <input type="text" class="form-control" id="cityInput" placeholder="e.g. Coimbatore, Nagpur">
+          </div>
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100" id="saveLocBtn" data-i18n="Save Location">Save
+              Location</button>
+          </div>
+        </div>
+        <!-- Hidden coords filled by GPS or geocoding -->
+        <input type="hidden" id="lat">
+        <input type="hidden" id="lng">
+        <!-- Preview of resolved location -->
+        <div id="locPreview" class="mt-2 text-small" style="color:#4a7c59;display:none;">
+          ✅ <span id="locPreviewText"></span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal fade" id="productModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" data-i18n="Add product">Add product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="productAlert" class="alert alert-danger hide"></div>
+          <form id="productForm">
+            <div class="form-group mb-2">
+              <label data-i18n="Neem product name">Neem product name</label>
+              <input type="text" class="form-control" name="name" placeholder="e.g. Neem oil, Neem kernels" required>
+            </div>
+            <div class="form-group mb-2">
+              <label class="d-flex justify-content-between align-items-center">
+                <span data-i18n="Neem category">Neem category</span>
+                <button type="button" class="btn btn-sm btn-outline-primary" id="suggestProductBtn"
+                  title="Suggest category and description from product name">Suggest with AI</button>
+              </label>
+              <input type="text" class="form-control" name="category"
+                placeholder="e.g. Oil, Kernels, Leaves, Cake, Powder">
+            </div>
+            <div class="form-group mb-2">
+              <label data-i18n="Description">Description</label>
+              <textarea class="form-control" name="description" rows="2" placeholder="Brief description"></textarea>
+            </div>
+            <div class="form-group mb-2">
+              <label data-i18n="Unit">Unit</label>
+              <select class="form-control" name="unit">
+                <option value="kg">kg</option>
+                <option value="ton">ton</option>
+                <option value="litre">litre</option>
+                <option value="bag">bag</option>
+              </select>
+            </div>
+            <div class="form-group mb-2">
+              <label data-i18n="Price per unit">Price per unit (₹)</label>
+              <input type="number" class="form-control" name="pricePerUnit" min="0" step="0.01" placeholder="0">
+            </div>
+            <div class="form-group mb-2">
+              <label data-i18n="Min order quantity">Min order quantity</label>
+              <input type="number" class="form-control" name="minOrderQuantity" min="1" value="1">
+            </div>
+            <!-- Bulk Pricing Tiers -->
+            <hr class="my-3">
+            <h6 class="mb-2">📦 Bulk Order Pricing <span class="text-muted"
+                style="font-weight:400;font-size:0.8rem">(optional — set tiered pricing for large orders)</span></h6>
+            <div id="tierRows"></div>
+            <button type="button" class="btn btn-sm btn-outline mb-2" id="addTierBtn">+ Add pricing tier</button>
+            <hr class="my-3">
+            <h6 class="mb-2">Quality &amp; specifications (for buyer consideration)</h6>
+            <div class="form-group mb-2">
+              <label>Moisture content (%)</label>
+              <input type="number" class="form-control" name="moistureContentPercent" min="0" max="100" step="0.1"
+                placeholder="e.g. 12 for leaves/kernels">
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <label>PPM value</label>
+                <input type="number" class="form-control" name="ppmValue" min="0" step="0.01" placeholder="e.g. 1500">
+              </div>
+              <div class="col-6">
+                <label>PPM label</label>
+                <input type="text" class="form-control" name="ppmLabel" placeholder="e.g. Azadirachtin">
+              </div>
+            </div>
+            <p class="text-small text-muted mt-1 mb-2">e.g. Azadirachtin (ppm), Aflatoxin max (ppb)</p>
+            <div class="form-group mb-2">
+              <label class="d-flex justify-content-between align-items-center">
+                <span>Additional specifications</span>
+                <button type="button" class="btn btn-sm btn-outline" id="addSpecBtn">+ Add row</button>
+              </label>
+              <div id="specRows"></div>
+              <p class="text-small text-muted mt-1">e.g. Purity %, FFA %, Origin</p>
+            </div>
+            <!-- Product Images -->
+            <hr class="my-3">
+            <h6 class="mb-2">Product Images <span class="text-muted" style="font-weight:400;font-size:0.8rem">(up to 5 ·
+                JPG/PNG/WebP)</span></h6>
+            <div id="imgUploadArea"
+              style="border:2px dashed #c9d6c0;border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;background:#f7faf5;transition:background 0.2s;">
+              <input type="file" id="productImages" accept="image/*" multiple style="display:none">
+              <div id="imgUploadPrompt">
+                <div style="font-size:2rem;margin-bottom:0.4rem;">📷</div>
+                <div style="color:#4a7c59;font-weight:600;">Click to add photos</div>
+                <div style="color:#8a9b80;font-size:0.8rem;">or drag &amp; drop · max 5MB each</div>
+              </div>
+              <div id="imgPreviewRow"
+                style="display:flex;gap:0.5rem;flex-wrap:wrap;justify-content:center;margin-top:0.5rem;"></div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveProductBtn">Save product</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if (!requireAuth('supplier')) throw new Error('auth');
+    const user = getUser();
+    document.getElementById('userName').textContent = user?.businessName || user?.name || user?.email || '';
+    document.getElementById('logoutBtn').onclick = () => { clearAuth(); location.href = 'index.html'; };
+    api('/api/tips/seasonal?role=supplier').then(function (data) {
+      if (data.tip) document.getElementById('supplierSeasonalTip').textContent = data.tip;
+      else document.getElementById('supplierSeasonalTip').textContent = 'Update availability and prices; buyers often plan bulk orders in summer and monsoon.';
+    }).catch(function () {
+      document.getElementById('supplierSeasonalTip').textContent = 'Update availability and prices; buyers often plan bulk orders in summer and monsoon.';
+    });
+    // ── Location picker ────────────────────────────────────────────
+    // Load existing saved location and try to reverse geocode for display
+    (async () => {
+      try {
+        const me = await api('/api/auth/me');
+        const loc = me.user?.location?.coordinates; // [lng, lat]
+        if (loc && loc.length >= 2) {
+          document.getElementById('lng').value = loc[0];
+          document.getElementById('lat').value = loc[1];
+          // Reverse geocode to get city/state name
+          try {
+            const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${loc[1]}&lon=${loc[0]}&format=json`);
+            const d = await r.json();
+            const city = d.address?.city || d.address?.town || d.address?.village || d.address?.county || '';
+            const state = d.address?.state || '';
+            if (city || state) {
+              if (city) document.getElementById('cityInput').value = city;
+              // Try to match state in dropdown
+              const sel = document.getElementById('stateSelect');
+              for (const opt of sel.options) {
+                if (opt.value && state.toLowerCase().includes(opt.value.toLowerCase())) { sel.value = opt.value; break; }
+              }
+              showLocPreview(`${city}${state ? ', ' + state : ''}`);
+            }
+          } catch (_) { }
+        }
+      } catch (_) { }
+    })();
+
+    function showLocPreview(text) {
+      const p = document.getElementById('locPreview');
+      document.getElementById('locPreviewText').textContent = text;
+      p.style.display = 'block';
+    }
+
+    // GPS button
+    document.getElementById('gpsBtn').onclick = () => {
+      const btn = document.getElementById('gpsBtn');
+      const alertEl = document.getElementById('locationAlert');
+      alertEl.classList.add('hide');
+      if (!navigator.geolocation) {
+        alertEl.textContent = 'Geolocation is not supported by your browser.';
+        alertEl.classList.remove('hide'); return;
+      }
+      btn.disabled = true;
+      btn.textContent = '🛰️ Detecting…';
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          document.getElementById('lat').value = lat;
+          document.getElementById('lng').value = lng;
+          // Reverse geocode
+          try {
+            const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+            const d = await r.json();
+            const city = d.address?.city || d.address?.town || d.address?.village || d.address?.county || '';
+            const state = d.address?.state || '';
+            if (city) document.getElementById('cityInput').value = city;
+            const sel = document.getElementById('stateSelect');
+            for (const opt of sel.options) {
+              if (opt.value && state.toLowerCase().includes(opt.value.toLowerCase())) { sel.value = opt.value; break; }
+            }
+            showLocPreview(`${city}${state ? ', ' + state : ''}`);
+          } catch (_) { showLocPreview(`${lat.toFixed(4)}, ${lng.toFixed(4)}`); }
+          // Auto-save
+          try {
+            await api('/api/users/profile', { method: 'PATCH', body: JSON.stringify({ lat, lng }) });
+            alertEl.className = 'alert alert-success';
+            alertEl.textContent = '✅ Location saved from GPS!';
+            alertEl.classList.remove('hide');
+          } catch (err) {
+            alertEl.className = 'alert alert-danger';
+            alertEl.textContent = err.message || 'Failed to save.';
+            alertEl.classList.remove('hide');
+          }
+          btn.disabled = false;
+          btn.innerHTML = '<span style="font-size:1.1rem;">🛰️</span> Use My Current Location (GPS)';
+        },
+        (err) => {
+          alertEl.className = 'alert alert-danger';
+          alertEl.textContent = 'Could not get GPS location. Please allow location access or set manually.';
+          alertEl.classList.remove('hide');
+          btn.disabled = false;
+          btn.innerHTML = '<span style="font-size:1.1rem;">🛰️</span> Use My Current Location (GPS)';
+        },
+        { timeout: 10000 }
+      );
+    };
+
+    // Manual form submit — geocode city+state via Nominatim
+    document.getElementById('locationForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const alertEl = document.getElementById('locationAlert');
+      alertEl.classList.add('hide');
+      const city = document.getElementById('cityInput').value.trim();
+      const state = document.getElementById('stateSelect').value;
+
+      // If hidden lat/lng already set (from GPS), just save them
+      let lat = parseFloat(document.getElementById('lat').value);
+      let lng = parseFloat(document.getElementById('lng').value);
+
+      const btn = document.getElementById('saveLocBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+
+      // Geocode if city or state given
+      if (!isNaN(lat) && !isNaN(lng) && !city && !state) {
+        // nothing to geocode, use existing
+      } else if (city || state) {
+        try {
+          const query = [city, state, 'India'].filter(Boolean).join(', ');
+          const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=in`);
+          const results = await r.json();
+          if (!results.length) {
+            alertEl.textContent = 'Could not find that location. Please check the city/state spelling.';
+            alertEl.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Save Location'; return;
+          }
+          lat = parseFloat(results[0].lat);
+          lng = parseFloat(results[0].lon);
+          document.getElementById('lat').value = lat;
+          document.getElementById('lng').value = lng;
+          showLocPreview(`${city}${state ? ', ' + state : ''} → ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+        } catch (err) {
+          alertEl.textContent = 'Geocoding failed. Check your internet connection.';
+          alertEl.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Save Location'; return;
+        }
+      } else {
+        alertEl.textContent = 'Please enter a city/district or use GPS.';
+        alertEl.classList.remove('hide'); btn.disabled = false; btn.textContent = 'Save Location'; return;
+      }
+
+      try {
+        await api('/api/users/profile', { method: 'PATCH', body: JSON.stringify({ lat, lng }) });
+        alertEl.className = 'alert alert-success';
+        alertEl.textContent = '✅ Location saved! Buyers can now see you on the map.';
+        alertEl.classList.remove('hide');
+      } catch (err) {
+        alertEl.className = 'alert alert-danger';
+        alertEl.textContent = err.message || 'Failed to save.';
+        alertEl.classList.remove('hide');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Save Location';
+    };
+
+    const modal = new bootstrap.Modal(document.getElementById('productModal'));
+    const specRows = document.getElementById('specRows');
+    document.getElementById('addSpecBtn').onclick = () => {
+      const div = document.createElement('div');
+      div.className = 'd-flex gap-2 align-items-center mb-2 spec-row';
+      div.innerHTML = '<input type="text" class="form-control form-control-sm" placeholder="Name (e.g. Purity)" style="max-width:8rem"> <input type="text" class="form-control form-control-sm" placeholder="Value"> <input type="text" class="form-control form-control-sm" placeholder="Unit" style="max-width:5rem"> <button type="button" class="btn btn-sm btn-outline-danger remove-spec">×</button>';
+      div.querySelector('.remove-spec').onclick = () => div.remove();
+      specRows.appendChild(div);
+    };
+
+    // ── Bulk pricing tiers ────────────────────────────────────
+    const tierRows = document.getElementById('tierRows');
+    document.getElementById('addTierBtn').onclick = () => {
+      const div = document.createElement('div');
+      div.className = 'd-flex gap-2 align-items-center mb-2 tier-row';
+      div.innerHTML = '<input type="number" class="form-control form-control-sm" placeholder="Min qty (e.g. 100)" style="max-width:8rem" min="1"> <input type="number" class="form-control form-control-sm" placeholder="Price per unit (₹)" style="max-width:9rem" min="0" step="0.01"> <button type="button" class="btn btn-sm btn-outline-danger remove-tier">×</button>';
+      div.querySelector('.remove-tier').onclick = () => div.remove();
+      tierRows.appendChild(div);
+    };
+    // ── Image upload UI ─────────────────────────────────────
+    const imgArea = document.getElementById('imgUploadArea');
+    const imgInput = document.getElementById('productImages');
+    const imgPreview = document.getElementById('imgPreviewRow');
+    const imgPrompt = document.getElementById('imgUploadPrompt');
+    let selectedFiles = [];
+
+    imgArea.onclick = () => imgInput.click();
+    imgArea.ondragover = (e) => { e.preventDefault(); imgArea.style.background = '#e8f5e1'; };
+    imgArea.ondragleave = () => { imgArea.style.background = '#f7faf5'; };
+    imgArea.ondrop = (e) => { e.preventDefault(); imgArea.style.background = '#f7faf5'; addFiles(e.dataTransfer.files); };
+    imgInput.onchange = (e) => addFiles(e.target.files);
+
+    function addFiles(fileList) {
+      const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      Array.from(fileList).forEach(f => {
+        if (!allowed.includes(f.type)) return;
+        if (selectedFiles.length >= 5) return;
+        selectedFiles.push(f);
+      });
+      renderPreviews();
+    }
+
+    function renderPreviews() {
+      imgPreview.innerHTML = '';
+      imgPrompt.style.display = selectedFiles.length ? 'none' : '';
+      selectedFiles.forEach((f, i) => {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'position:relative;width:80px;height:80px;';
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(f);
+        img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid #c9d6c0;';
+        const rm = document.createElement('button');
+        rm.type = 'button';
+        rm.textContent = '×';
+        rm.style.cssText = 'position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;background:#e74c3c;color:#fff;border:none;font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+        rm.onclick = (e) => { e.stopPropagation(); selectedFiles.splice(i, 1); renderPreviews(); };
+        wrap.appendChild(img);
+        wrap.appendChild(rm);
+        imgPreview.appendChild(wrap);
+      });
+    }
+
+    document.getElementById('addProductBtn').onclick = () => {
+      specRows.innerHTML = '';
+      tierRows.innerHTML = '';
+      selectedFiles = [];
+      renderPreviews();
+      imgInput.value = '';
+      modal.show();
+    };
+
+    document.getElementById('saveProductBtn').onclick = async () => {
+      const form = document.getElementById('productForm');
+      const alertEl = document.getElementById('productAlert');
+      alertEl.classList.add('hide');
+      const specs = [];
+      document.querySelectorAll('#specRows .spec-row').forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const name = inputs[0]?.value?.trim();
+        const value = inputs[1]?.value?.trim();
+        if (name && value) specs.push({ name, value, unit: (inputs[2]?.value?.trim() || '') });
+      });
+      const moisture = form.moistureContentPercent?.value ? parseFloat(form.moistureContentPercent.value) : null;
+      const ppmVal = form.ppmValue?.value ? parseFloat(form.ppmValue.value) : null;
+      const ppmLbl = form.ppmLabel?.value?.trim() || '';
+      const payload = {
+        name: form.name.value.trim(),
+        category: form.category.value.trim() || undefined,
+        description: form.description.value.trim() || undefined,
+        unit: form.unit.value,
+        pricePerUnit: parseFloat(form.pricePerUnit.value) || 0,
+        minOrderQuantity: parseInt(form.minOrderQuantity.value, 10) || 1,
+        moistureContentPercent: moisture,
+        ppmValue: ppmVal,
+        ppmLabel: ppmLbl,
+        specifications: specs
+      };
+      // Collect pricing tiers
+      const tiers = [];
+      document.querySelectorAll('#tierRows .tier-row').forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const minQty = parseInt(inputs[0]?.value, 10);
+        const price = parseFloat(inputs[1]?.value);
+        if (minQty > 0 && price > 0) tiers.push({ minQty, pricePerUnit: price });
+      });
+      if (tiers.length) payload.priceTiers = tiers;
+      try {
+        const created = await api('/api/products', { method: 'POST', body: JSON.stringify(payload) });
+
+        // Upload images if any were selected
+        if (selectedFiles.length > 0 && created._id) {
+          const fd = new FormData();
+          selectedFiles.forEach(f => fd.append('images', f));
+          const token = localStorage.getItem('ns_token');
+          await fetch(`/api/products/${created._id}/images`, {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + token },
+            body: fd
+          });
+        }
+
+        modal.hide();
+        form.reset();
+        specRows.innerHTML = '';
+        selectedFiles = [];
+        location.reload();
+      } catch (e) {
+        alertEl.textContent = e.message || 'Failed to add product.';
+        alertEl.classList.remove('hide');
+      }
+    };
+    document.getElementById('hamburger').onclick = () => document.getElementById('navLinks').classList.toggle('open');
+  </script>
+  <script src="js/i18n.js"></script>
+</body>
+
+</html>

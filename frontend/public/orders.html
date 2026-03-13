@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders – Neem Sourcing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/theme.css" rel="stylesheet">
+    <style>
+        .order-card {
+            border-radius: 14px;
+            border: 1px solid #e0e8d9;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(40, 80, 40, 0.06);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: box-shadow .2s
+        }
+
+        .order-card:hover {
+            box-shadow: 0 4px 18px rgba(40, 80, 40, 0.12)
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em
+        }
+
+        .st-pending {
+            background: #fff3cd;
+            color: #856404
+        }
+
+        .st-accepted {
+            background: #d4edda;
+            color: #155724
+        }
+
+        .st-rejected {
+            background: #f8d7da;
+            color: #721c24
+        }
+
+        .st-fulfilled {
+            background: #cce5ff;
+            color: #004085
+        }
+
+        .st-cancelled {
+            background: #e2e3e5;
+            color: #383d41
+        }
+
+        .neg-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600
+        }
+
+        .neg-pending {
+            background: #fff3cd;
+            color: #856404
+        }
+
+        .neg-accepted {
+            background: #d4edda;
+            color: #155724
+        }
+
+        .neg-rejected {
+            background: #f8d7da;
+            color: #721c24
+        }
+
+        .rating-stars {
+            color: #f0ad4e;
+            font-size: 1.2rem;
+            cursor: pointer;
+            user-select: none
+        }
+
+        .rating-stars .star.filled {
+            color: #f0ad4e
+        }
+
+        .rating-stars .star {
+            color: #d6d6d6
+        }
+
+        .bulk-tier {
+            display: inline-block;
+            background: #e8f5e1;
+            color: #2d5a27;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            margin: 2px 3px
+        }
+
+        .product-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e0e8d9
+        }
+
+        .counter-offer-form {
+            background: #f7faf5;
+            border: 1px dashed #c9d6c0;
+            border-radius: 10px;
+            padding: 0.9rem;
+            margin-top: 0.5rem
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem
+        }
+
+        .filter-tab {
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: 1px solid #c9d6c0;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all .2s
+        }
+
+        .filter-tab:hover,
+        .filter-tab.active {
+            background: #2d5a27;
+            color: #fff;
+            border-color: #2d5a27
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a class="navbar-brand" href="#" id="navBrand">Neem Sourcing</a>
+        <button class="nav-hamburger" id="hamburger" aria-label="Menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="products.html" data-i18n="Products">Products</a>
+            <a href="orders.html" style="font-weight:600;" data-i18n="Orders">Orders</a>
+            <a href="chat.html" data-i18n="Chat">Chat</a>
+            <a href="#" id="navDashboard" data-i18n="Dashboard">Dashboard</a>
+            <button type="button" class="btn btn-outline btn-sm" id="logoutBtn" data-i18n="Log out">Log out</button>
+        </div>
+    </nav>
+
+    <div class="container-wide page">
+        <h1 class="page-title d-flex align-center justify-between flex-wrap gap-2">
+            <span id="pageTitle" data-i18n="My Orders">My Orders</span>
+            <span class="text-muted text-small" id="orderCount"></span>
+        </h1>
+
+        <!-- Status filter tabs -->
+        <div class="filter-tabs" id="filterTabs">
+            <div class="filter-tab active" data-status="" data-i18n="All">All</div>
+            <div class="filter-tab" data-status="pending">⏳ <span data-i18n="Pending">Pending</span></div>
+            <div class="filter-tab" data-status="accepted">✅ <span data-i18n="Accepted">Accepted</span></div>
+            <div class="filter-tab" data-status="fulfilled">📦 <span data-i18n="Fulfilled">Fulfilled</span></div>
+            <div class="filter-tab" data-status="rejected">❌ <span data-i18n="Rejected">Rejected</span></div>
+            <div class="filter-tab" data-status="cancelled">🚫 <span data-i18n="Cancelled">Cancelled</span></div>
+        </div>
+
+        <div id="ordersList"></div>
+        <p class="text-muted text-small mt-2" id="emptyState"></p>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" data-i18n="Rate this supplier">Rate this supplier</h5><button type="button"
+                        class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="reviewOrderId">
+                    <div class="text-center mb-3" id="reviewStars">
+                        <span class="rating-stars">
+                            <span class="star" data-v="1">★</span>
+                            <span class="star" data-v="2">★</span>
+                            <span class="star" data-v="3">★</span>
+                            <span class="star" data-v="4">★</span>
+                            <span class="star" data-v="5">★</span>
+                        </span>
+                        <div class="text-muted text-small mt-1" id="ratingLabel">Click a star</div>
+                    </div>
+                    <textarea class="form-control" id="reviewComment" rows="2"
+                        placeholder="Optional comment…"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="submitReviewBtn">Submit review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        if (!isLoggedIn()) location.href = 'login.html';
+        const user = getUser();
+        const isSupplier = user?.role === 'supplier';
+        document.getElementById('navBrand').href = isSupplier ? 'dashboard-supplier.html' : 'dashboard-shop.html';
+        document.getElementById('navDashboard').href = isSupplier ? 'dashboard-supplier.html' : 'dashboard-shop.html';
+        document.getElementById('logoutBtn').onclick = () => { clearAuth(); location.href = 'index.html'; };
+        document.getElementById('hamburger').onclick = () => document.getElementById('navLinks').classList.toggle('open');
+
+        let currentFilter = '';
+
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.onclick = () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.status;
+                loadOrders();
+            };
+        });
+
+        function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+        async function loadOrders() {
+            const list = document.getElementById('ordersList');
+            const empty = document.getElementById('emptyState');
+            list.innerHTML = '<div class="text-muted">Loading orders…</div>';
+            empty.textContent = '';
+            try {
+                const qs = currentFilter ? `?status=${currentFilter}` : '';
+                const orders = await api('/api/orders' + qs);
+                document.getElementById('orderCount').textContent = `${orders.length} order${orders.length !== 1 ? 's' : ''}`;
+                list.innerHTML = '';
+                if (!orders.length) { empty.textContent = 'No orders found.'; return; }
+
+                orders.forEach(o => {
+                    const card = document.createElement('div');
+                    card.className = 'order-card';
+                    const product = o.productId || {};
+                    const thumb = product.images?.length
+                        ? `<img src="${product.images[0]}" class="product-thumb" onerror="this.style.display='none'">`
+                        : '<div style="width:50px;height:50px;border-radius:8px;background:#e8f5e1;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">🌿</div>';
+                    const otherParty = isSupplier
+                        ? (o.buyerId?.businessName || o.buyerId?.name || 'Buyer')
+                        : (o.supplierId?.businessName || o.supplierId?.name || 'Supplier');
+                    const partyLabel = isSupplier ? 'Buyer' : 'Supplier';
+
+                    let negHtml = '';
+                    if (o.negotiationStatus && o.negotiationStatus !== 'none') {
+                        negHtml = `<div class="mt-1">
+              <span class="neg-badge neg-${o.negotiationStatus}">💬 Counter-offer ₹${o.counterOfferPrice}/${o.unit} — ${o.negotiationStatus}</span>
+              ${o.negotiationNote ? `<span class="text-muted text-small ms-1">"${esc(o.negotiationNote)}"</span>` : ''}
+            </div>`;
+                    }
+
+                    // Action buttons
+                    let actions = '';
+                    if (isSupplier) {
+                        if (o.status === 'pending') {
+                            actions += `<button class="btn btn-sm btn-primary" onclick="updateOrder('${o._id}','accepted')">✅ Accept</button> `;
+                            actions += `<button class="btn btn-sm btn-outline" onclick="updateOrder('${o._id}','rejected')">❌ Reject</button> `;
+                        }
+                        if (o.status === 'accepted') {
+                            actions += `<button class="btn btn-sm btn-primary" onclick="updateOrder('${o._id}','fulfilled')">📦 Mark Fulfilled</button> `;
+                        }
+                        if (o.negotiationStatus === 'pending') {
+                            actions += `<button class="btn btn-sm btn-outline" style="border-color:#28a745;color:#28a745" onclick="updateOrder('${o._id}',null,'accept_offer')">Accept ₹${o.counterOfferPrice}</button> `;
+                            actions += `<button class="btn btn-sm btn-outline" style="border-color:#dc3545;color:#dc3545" onclick="updateOrder('${o._id}',null,'reject_offer')">Reject offer</button> `;
+                        }
+                    } else {
+                        // Buyer actions
+                        if (o.status === 'pending') {
+                            actions += `<button class="btn btn-sm btn-outline" style="border-color:#dc3545;color:#dc3545" onclick="updateOrder('${o._id}','cancelled')">Cancel</button> `;
+                            if (!o.negotiationStatus || o.negotiationStatus === 'none' || o.negotiationStatus === 'rejected') {
+                                actions += `<button class="btn btn-sm btn-outline" onclick="showCounter('${o._id}', ${o.unitPrice})">💬 Negotiate price</button> `;
+                            }
+                        }
+                        if (o.status === 'fulfilled' && !o.review) {
+                            actions += `<button class="btn btn-sm btn-primary" onclick="openReview('${o._id}')">⭐ Leave review</button> `;
+                        }
+                    }
+                    // Invoice (for accepted/fulfilled)
+                    if (['accepted', 'fulfilled'].includes(o.status)) {
+                        actions += `<a href="/api/orders/${o._id}/invoice" target="_blank" class="btn btn-sm btn-outline">📄 Invoice PDF</a> `;
+                    }
+
+                    // Review display
+                    let reviewHtml = '';
+                    if (o.review) {
+                        const stars = '★'.repeat(o.review.rating) + '☆'.repeat(5 - o.review.rating);
+                        reviewHtml = `<div class="mt-2 text-small" style="color:#f0ad4e"><span style="letter-spacing:2px">${stars}</span> <span class="text-muted">${o.review.comment ? '"' + esc(o.review.comment) + '"' : ''}</span></div>`;
+                    }
+
+                    card.innerHTML = `
+            <div class="d-flex gap-3 align-items-start">
+              ${thumb}
+              <div class="flex-grow-1">
+                <div class="d-flex justify-between align-center flex-wrap gap-1">
+                  <h5 class="mb-0" style="font-size:1rem;">${esc(product.name || 'Product')}</h5>
+                  <span class="order-status st-${o.status}">${o.status}</span>
+                </div>
+                <p class="text-muted text-small mb-1">${partyLabel}: ${esc(otherParty)}</p>
+                <p class="mb-1"><strong>${o.quantity} ${o.unit}</strong> × ₹${o.unitPrice.toLocaleString()} = <strong>₹${o.totalPrice.toLocaleString()}</strong></p>
+                ${negHtml}
+                ${o.buyerNote ? `<p class="text-small text-muted mb-0">📋 ${esc(o.buyerNote)}</p>` : ''}
+                ${o.supplierNote ? `<p class="text-small text-muted mb-0">📋 Supplier: ${esc(o.supplierNote)}</p>` : ''}
+                ${reviewHtml}
+                <div class="d-flex gap-2 mt-2 flex-wrap" id="actions-${o._id}">${actions}</div>
+                <div id="counter-${o._id}"></div>
+                <div class="text-muted text-small mt-1">${new Date(o.createdAt).toLocaleDateString('en-IN')} ${new Date(o.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+              </div>
+            </div>`;
+                    list.appendChild(card);
+                });
+            } catch (e) {
+                list.innerHTML = '';
+                empty.textContent = 'Could not load orders. Please try again.';
+            }
+        }
+
+        async function updateOrder(id, status, action) {
+            try {
+                const body = {};
+                if (status) body.status = status;
+                if (action) body.action = action;
+                await api(`/api/orders/${id}`, { method: 'PATCH', body: JSON.stringify(body) });
+                loadOrders();
+            } catch (e) { alert(e.message); }
+        }
+
+        function showCounter(orderId, currentPrice) {
+            const el = document.getElementById('counter-' + orderId);
+            el.innerHTML = `
+        <div class="counter-offer-form">
+          <label class="form-label text-small">Your counter-offer price per unit (₹)</label>
+          <div class="d-flex gap-2">
+            <input type="number" class="form-control form-control-sm" id="cp-${orderId}" min="1" step="0.01" placeholder="${currentPrice}" style="max-width:120px">
+            <input type="text" class="form-control form-control-sm" id="cn-${orderId}" placeholder="Note (optional)" style="max-width:200px">
+            <button class="btn btn-sm btn-primary" onclick="sendCounter('${orderId}')">Send</button>
+          </div>
+        </div>`;
+        }
+
+        async function sendCounter(id) {
+            const price = +document.getElementById('cp-' + id).value;
+            const note = document.getElementById('cn-' + id).value;
+            if (!price || price < 1) { alert('Enter a valid price.'); return; }
+            try {
+                await api(`/api/orders/${id}`, { method: 'PATCH', body: JSON.stringify({ counterOfferPrice: price, negotiationNote: note }) });
+                loadOrders();
+            } catch (e) { alert(e.message); }
+        }
+
+        // ── Review system ────────────────────────────────────────────────
+        let reviewRating = 0;
+        const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        document.querySelectorAll('#reviewStars .star').forEach(s => {
+            s.onmouseenter = () => highlightStars(+s.dataset.v);
+            s.onclick = () => { reviewRating = +s.dataset.v; highlightStars(reviewRating); document.getElementById('ratingLabel').textContent = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'][reviewRating]; };
+        });
+        document.getElementById('reviewStars').onmouseleave = () => highlightStars(reviewRating);
+
+        function highlightStars(n) {
+            document.querySelectorAll('#reviewStars .star').forEach(s => {
+                s.classList.toggle('filled', +s.dataset.v <= n);
+                s.style.color = +s.dataset.v <= n ? '#f0ad4e' : '#d6d6d6';
+            });
+        }
+
+        function openReview(orderId) {
+            document.getElementById('reviewOrderId').value = orderId;
+            reviewRating = 0; highlightStars(0);
+            document.getElementById('reviewComment').value = '';
+            document.getElementById('ratingLabel').textContent = 'Click a star';
+            reviewModal.show();
+        }
+
+        document.getElementById('submitReviewBtn').onclick = async () => {
+            if (!reviewRating) { alert('Please select a rating.'); return; }
+            const orderId = document.getElementById('reviewOrderId').value;
+            try {
+                await api(`/api/orders/${orderId}/review`, {
+                    method: 'POST',
+                    body: JSON.stringify({ rating: reviewRating, comment: document.getElementById('reviewComment').value.trim() })
+                });
+                reviewModal.hide();
+                loadOrders();
+            } catch (e) { alert(e.message); }
+        };
+
+        loadOrders();
+    </script>
+    <script src="js/i18n.js"></script>
+</body>
+
+</html>
