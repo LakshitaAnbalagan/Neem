@@ -53,10 +53,17 @@ async function api(path, options = {}) {
   const token = getToken();
   const headers = { 'Content-Type': 'application/json', ...options.headers };
   if (token) headers['Authorization'] = 'Bearer ' + token;
-  const res = await fetch(API_BASE + path, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
-  return data;
+  try {
+    const res = await fetch(API_BASE + path, { ...options, headers });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
+    return data;
+  } catch (err) {
+    if (!navigator.onLine) {
+      throw new Error('You are offline. Please check your connection and try again.');
+    }
+    throw err;
+  }
 }
 
 function trustClass(score) {
@@ -92,3 +99,42 @@ function getSeasonalTip(month) {
 function currentSeasonMonth() {
   return new Date().getMonth() + 1;
 }
+
+// ── Register Service Worker for offline support ──────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('[SW] Registered:', reg.scope))
+      .catch(err => console.warn('[SW] Registration failed:', err));
+  });
+}
+
+// ── Offline/Online Status Banner ─────────────────────────────
+(function () {
+  function createBanner() {
+    if (document.getElementById('offlineBanner')) return;
+    const banner = document.createElement('div');
+    banner.id = 'offlineBanner';
+    banner.innerHTML = '⚡ You are offline — showing cached data';
+    banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#b8881a,#d4a630);color:#fff;text-align:center;padding:0.5rem 1rem;font-size:0.82rem;font-weight:600;font-family:inherit;transform:translateY(-100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);box-shadow:0 2px 12px rgba(184,136,26,0.3);';
+    document.body.appendChild(banner);
+    return banner;
+  }
+
+  function showBanner() {
+    const b = createBanner() || document.getElementById('offlineBanner');
+    if (b) { requestAnimationFrame(() => { b.style.transform = 'translateY(0)'; }); }
+  }
+
+  function hideBanner() {
+    const b = document.getElementById('offlineBanner');
+    if (b) {
+      b.style.transform = 'translateY(-100%)';
+      setTimeout(() => b.remove(), 400);
+    }
+  }
+
+  window.addEventListener('offline', showBanner);
+  window.addEventListener('online', hideBanner);
+  if (!navigator.onLine) showBanner();
+})();

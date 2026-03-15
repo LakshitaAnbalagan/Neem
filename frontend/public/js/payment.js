@@ -8,7 +8,7 @@ function loadQRLib() {
   return new Promise((resolve, reject) => {
     if (window.QRCode) return resolve();
     const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+    s.src = 'vendor/js/qrcode.min.js';
     s.onload = resolve;
     s.onerror = () => reject(new Error('Failed to load QR library'));
     document.head.appendChild(s);

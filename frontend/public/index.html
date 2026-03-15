@@ -7,11 +7,7 @@
   <title>Neem Sourcing – India's Premier B2B Neem Procurement Platform</title>
   <meta name="description"
     content="Connect with verified neem suppliers across India. Source neem oil, kernels, cake, and leaves with AI-driven insights, transparent trust scores, and real-time chat.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
+  <link href="vendor/css/fonts.css" rel="stylesheet">
   <link href="css/theme.css" rel="stylesheet">
   <style>
     /* Page-specific animations & extras */
@@ -1870,6 +1866,15 @@
     }
   </script>
   <script src="js/i18n.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[SW] Registered:', reg.scope))
+          .catch(err => console.warn('[SW] Registration failed:', err));
+      });
+    }
+  </script>
 </body>
 
-</html>
+</html>

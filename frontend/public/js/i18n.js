@@ -52,6 +52,9 @@
         const trimmed = text.trim();
         if (/^[\d\s₹%.,:/\-+()]+$/.test(trimmed)) return text; // skip pure numbers/symbols
 
+        // If offline, return original text (cache will be used by translateBatch)
+        if (!navigator.onLine) return text;
+
         const dedup = trimmed + '||' + targetLang;
         if (pending[dedup]) return pending[dedup];
 
